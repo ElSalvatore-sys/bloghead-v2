@@ -19,7 +19,7 @@ EA Platform connects German artists with venues and event organizers through a s
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Next.js 14 + React 18 + TypeScript |
+| Frontend | React 18 + Vite + TypeScript |
 | Styling | TailwindCSS 4 |
 | Backend | Supabase (Auth + DB + Storage + Realtime) |
 | Database | PostgreSQL 15+ with Row Level Security |
@@ -53,17 +53,15 @@ bridebook-v2/
 
 ## Getting Started
 
-*Coming in Phase 2 (Setup)*
-
 ```bash
 # Clone the repository
 git clone https://github.com/ElSalvatore-sys/bridebook-v2.git
 cd bridebook-v2
 
-# Install dependencies (coming soon)
+# Install dependencies
 npm install
 
-# Start development server (coming soon)
+# Start development server
 npm run dev
 ```
 
@@ -71,9 +69,9 @@ npm run dev
 
 | Phase | Status | Description |
 |-------|--------|-------------|
-| 0 - Discovery | IN PROGRESS | Research, PRD, personas, MVP scope |
-| 1 - Planning | PENDING | Tech specs, architecture decisions |
-| 2 - Setup | PENDING | Project scaffolding, CI/CD |
+| 0 - Discovery | DONE | Research, PRD, personas, MVP scope |
+| 1 - Planning | DONE | Tech specs, architecture decisions |
+| 2 - Setup | DONE | Project scaffolding, CI/CD |
 | 3 - Database | PENDING | Schema design, migrations |
 | ... | ... | See [PHASE-TRACKER.md](docs/PHASE-TRACKER.md) |
 
@@ -83,7 +81,7 @@ This project is informed by extensive research from the Bridebook wedding platfo
 
 ## License
 
-Proprietary - EA Solutions
+Proprietary - Oasis Technologies
 
 ---
 

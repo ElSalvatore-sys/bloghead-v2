@@ -67,3 +67,4 @@ temp/
 *.key
 credentials.json
 service-account.json
+.vercel

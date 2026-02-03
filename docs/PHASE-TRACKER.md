@@ -57,18 +57,18 @@
 
 ## Phase 2: Setup
 
-**Status:** `PENDING`
+**Status:** `DONE`
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Vite + React + TypeScript init | PENDING | |
-| TailwindCSS configuration | PENDING | |
-| shadcn/ui setup | PENDING | |
-| Supabase project creation | PENDING | |
-| Vercel deployment | PENDING | |
-| Sentry integration | PENDING | |
+| Vite + React + TypeScript init | DONE | v5.x + React 19 |
+| TailwindCSS configuration | DONE | v3.x |
+| shadcn/ui setup | DONE | Base components installed |
+| Supabase MCP configuration | DONE | worxtybvwtiubdtmowvq |
+| Vercel deployment | DONE | |
+| Sentry integration | DONE | Client-side initialized |
 | CI/CD pipeline | PENDING | GitHub Actions |
-| Environment configuration | PENDING | .env files |
+| Environment configuration | DONE | .env.example + .env.local |
 
 ---
 
