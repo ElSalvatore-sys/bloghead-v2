@@ -13,7 +13,8 @@
     "db:reset": "supabase db reset",
     "db:push": "supabase db push",
     "db:diff": "supabase db diff",
-    "db:migrate": "supabase migration new"
+    "db:migrate": "supabase migration new",
+    "db:seed-users": "tsx scripts/seed-test-users.ts"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,8 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.2",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.2.0",
     "@types/react": "^19.2.10",
