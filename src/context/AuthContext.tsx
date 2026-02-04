@@ -27,7 +27,7 @@ interface AuthContextType {
     metadata?: { first_name?: string; last_name?: string }
   ) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
-  signInWithGoogle: () => Promise<void>
+  signInWithGoogle: () => Promise<{ error: AuthError | null }>
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>
   updatePassword: (password: string) => Promise<{ error: AuthError | null }>
   refreshProfile: () => Promise<void>
@@ -150,13 +150,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await supabase.auth.signOut()
   }
 
-  const signInWithGoogle = async (): Promise<void> => {
-    await supabase.auth.signInWithOAuth({
+  const signInWithGoogle = async (): Promise<{ error: AuthError | null }> => {
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     })
+    return { error }
   }
 
   const resetPassword = async (
