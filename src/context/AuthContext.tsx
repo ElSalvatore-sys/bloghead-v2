@@ -24,7 +24,7 @@ interface AuthContextType {
   signUp: (
     email: string,
     password: string,
-    metadata?: { first_name?: string; last_name?: string }
+    metadata?: { first_name?: string; last_name?: string; role?: string }
   ) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<{ error: AuthError | null }>
@@ -134,7 +134,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signUp = async (
     email: string,
     password: string,
-    metadata?: { first_name?: string; last_name?: string }
+    metadata?: { first_name?: string; last_name?: string; role?: string }
   ): Promise<{ error: AuthError | null }> => {
     const { error } = await supabase.auth.signUp({
       email,

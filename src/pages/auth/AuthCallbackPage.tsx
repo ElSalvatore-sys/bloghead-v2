@@ -2,6 +2,9 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/services/supabase'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import type { Database } from '@/types/database'
+
+type ProfileRole = Database['public']['Enums']['profile_role']
 
 export function AuthCallbackPage() {
   const navigate = useNavigate()
@@ -19,6 +22,37 @@ export function AuthCallbackPage() {
         }
 
         if (data.session) {
+          // Handle pending role from OAuth signup
+          const pendingRole = localStorage.getItem('pending_signup_role')
+          if (pendingRole) {
+            localStorage.removeItem('pending_signup_role')
+
+            // Validate and cast to ProfileRole
+            const validRoles: ProfileRole[] = ['USER', 'ARTIST', 'VENUE', 'ADMIN']
+            const role = validRoles.includes(pendingRole as ProfileRole)
+              ? (pendingRole as ProfileRole)
+              : 'USER'
+
+            // Retry logic for race condition with trigger
+            // The trigger may not have created the profile yet
+            const maxRetries = 3
+            for (let i = 0; i < maxRetries; i++) {
+              const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ role })
+                .eq('id', data.session.user.id)
+
+              if (!updateError) break
+
+              if (i < maxRetries - 1) {
+                // Wait 500ms before retry
+                await new Promise((r) => setTimeout(r, 500))
+              } else {
+                console.error('Failed to update role after retries:', updateError)
+              }
+            }
+          }
+
           // Successfully authenticated, redirect to dashboard
           navigate('/dashboard', { replace: true })
         } else {

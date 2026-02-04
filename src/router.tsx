@@ -12,9 +12,7 @@ const HomePage = lazy(() =>
 const LoginPage = lazy(() =>
   import('@/pages/auth/LoginPage').then((m) => ({ default: m.LoginPage }))
 )
-const SignupPage = lazy(() =>
-  import('@/pages/auth/SignupPage').then((m) => ({ default: m.SignupPage }))
-)
+const SignupPage = lazy(() => import('@/pages/auth/SignupPage'))
 const ForgotPasswordPage = lazy(() =>
   import('@/pages/auth/ForgotPasswordPage').then((m) => ({
     default: m.ForgotPasswordPage,
