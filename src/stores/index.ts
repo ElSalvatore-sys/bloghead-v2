@@ -1,2 +1,1 @@
-// Zustand stores barrel file
-// Export stores here as they are created
+export { useUIStore } from './uiStore'

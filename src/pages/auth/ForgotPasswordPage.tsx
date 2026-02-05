@@ -43,7 +43,6 @@ export default function ForgotPasswordPage() {
   // Success state - show confirmation message
   if (isSubmitted) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <svg
@@ -80,12 +79,10 @@ export default function ForgotPasswordPage() {
             Back to login
           </Link>
         </div>
-      </div>
     )
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center">
@@ -133,6 +130,5 @@ export default function ForgotPasswordPage() {
           </Link>
         </p>
       </div>
-    </div>
   )
 }

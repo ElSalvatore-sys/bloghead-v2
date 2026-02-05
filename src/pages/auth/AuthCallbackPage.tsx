@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/services/supabase'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import type { Database } from '@/types/database'
 
 type ProfileRole = Database['public']['Enums']['profile_role']

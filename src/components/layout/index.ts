@@ -1,3 +1,4 @@
-// Layout components barrel file
-// Export layout components here as they are created
-// Example: export { Header } from './Header'
+export { Header } from './Header'
+export { Sidebar } from './Sidebar'
+export { MainLayout } from './MainLayout'
+export { AuthLayout } from './AuthLayout'

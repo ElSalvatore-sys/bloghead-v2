@@ -19,6 +19,7 @@ export function LoadingSpinner({
 
   const spinner = (
     <div
+      data-testid="loading-spinner"
       className={cn(
         'animate-spin rounded-full border-primary border-t-transparent',
         sizeClasses[size],

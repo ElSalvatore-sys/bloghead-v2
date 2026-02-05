@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import type { ReactNode } from 'react'
 import type { Database } from '@/types/database'
 

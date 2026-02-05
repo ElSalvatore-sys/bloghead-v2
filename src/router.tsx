@@ -3,7 +3,9 @@ import { lazy, Suspense } from 'react'
 import App from './App'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { AuthRoute } from '@/components/auth/AuthRoute'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { MainLayout } from '@/components/layout/MainLayout'
+import { AuthLayout } from '@/components/layout/AuthLayout'
 
 // Lazy load pages for better performance
 const HomePage = lazy(() =>
@@ -36,6 +38,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
+      // Public - no layout
       {
         index: true,
         element: (
@@ -44,44 +47,53 @@ export const router = createBrowserRouter([
           </LazyPage>
         ),
       },
+
+      // Auth pages - AuthLayout
       {
-        path: 'login',
-        element: (
-          <AuthRoute>
-            <LazyPage>
-              <LoginPage />
-            </LazyPage>
-          </AuthRoute>
-        ),
+        element: <AuthLayout />,
+        children: [
+          {
+            path: 'login',
+            element: (
+              <AuthRoute>
+                <LazyPage>
+                  <LoginPage />
+                </LazyPage>
+              </AuthRoute>
+            ),
+          },
+          {
+            path: 'signup',
+            element: (
+              <AuthRoute>
+                <LazyPage>
+                  <SignupPage />
+                </LazyPage>
+              </AuthRoute>
+            ),
+          },
+          {
+            path: 'forgot-password',
+            element: (
+              <AuthRoute>
+                <LazyPage>
+                  <ForgotPasswordPage />
+                </LazyPage>
+              </AuthRoute>
+            ),
+          },
+          {
+            path: 'reset-password',
+            element: (
+              <LazyPage>
+                <ResetPasswordPage />
+              </LazyPage>
+            ),
+          },
+        ],
       },
-      {
-        path: 'signup',
-        element: (
-          <AuthRoute>
-            <LazyPage>
-              <SignupPage />
-            </LazyPage>
-          </AuthRoute>
-        ),
-      },
-      {
-        path: 'forgot-password',
-        element: (
-          <AuthRoute>
-            <LazyPage>
-              <ForgotPasswordPage />
-            </LazyPage>
-          </AuthRoute>
-        ),
-      },
-      {
-        path: 'reset-password',
-        element: (
-          <LazyPage>
-            <ResetPasswordPage />
-          </LazyPage>
-        ),
-      },
+
+      // Auth callback - no layout (just redirect logic)
       {
         path: 'auth/callback',
         element: (
@@ -90,20 +102,27 @@ export const router = createBrowserRouter([
           </LazyPage>
         ),
       },
+
+      // Protected pages - MainLayout
       {
-        path: 'dashboard',
         element: (
           <ProtectedRoute>
-            <LazyPage>
-              <DashboardPage />
-            </LazyPage>
+            <MainLayout />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            path: 'dashboard',
+            element: (
+              <LazyPage>
+                <DashboardPage />
+              </LazyPage>
+            ),
+          },
+        ],
       },
-      {
-        path: '*',
-        element: <Navigate to="/" replace />,
-      },
+
+      { path: '*', element: <Navigate to="/" replace /> },
     ],
   },
 ])
