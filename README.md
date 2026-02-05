@@ -1,4 +1,4 @@
-# EA Platform (bridebook-v2)
+# EA Platform (bloghead-v2)
 
 > Artists, Venues, and Organizers marketplace for the German entertainment industry.
 
@@ -30,7 +30,7 @@ EA Platform connects German artists with venues and event organizers through a s
 ## Project Structure
 
 ```
-bridebook-v2/
+bloghead-v2/
 ├── .github/              # GitHub templates and workflows
 ├── docs/                 # Project documentation
 │   ├── PHASE-TRACKER.md  # Development phase status
@@ -55,8 +55,8 @@ bridebook-v2/
 
 ```bash
 # Clone the repository
-git clone https://github.com/ElSalvatore-sys/bridebook-v2.git
-cd bridebook-v2
+git clone https://github.com/ElSalvatore-sys/bloghead-v2.git
+cd bloghead-v2
 
 # Install dependencies
 npm install

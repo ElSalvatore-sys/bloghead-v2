@@ -18,9 +18,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ElSalvatore-sys/bridebook-v2.git"
+    "url": "git+https://github.com/ElSalvatore-sys/bloghead-v2.git"
   },
-  "homepage": "https://github.com/ElSalvatore-sys/bridebook-v2#readme",
+  "homepage": "https://github.com/ElSalvatore-sys/bloghead-v2#readme",
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1.1.11",

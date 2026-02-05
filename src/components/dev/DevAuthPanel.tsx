@@ -61,9 +61,14 @@ export function DevAuthPanel() {
 
   const handleLogout = async () => {
     setIsLoading('logout')
-    await signOut()
-    toast.success('Logged out')
-    setIsLoading(null)
+    try {
+      await signOut()
+      toast.success('Logged out')
+    } catch {
+      toast.error('Logout failed, clearing session locally')
+    } finally {
+      setIsLoading(null)
+    }
   }
 
   return (

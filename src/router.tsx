@@ -13,16 +13,8 @@ const LoginPage = lazy(() =>
   import('@/pages/auth/LoginPage').then((m) => ({ default: m.LoginPage }))
 )
 const SignupPage = lazy(() => import('@/pages/auth/SignupPage'))
-const ForgotPasswordPage = lazy(() =>
-  import('@/pages/auth/ForgotPasswordPage').then((m) => ({
-    default: m.ForgotPasswordPage,
-  }))
-)
-const ResetPasswordPage = lazy(() =>
-  import('@/pages/auth/ResetPasswordPage').then((m) => ({
-    default: m.ResetPasswordPage,
-  }))
-)
+const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'))
 const AuthCallbackPage = lazy(() =>
   import('@/pages/auth/AuthCallbackPage').then((m) => ({
     default: m.AuthCallbackPage,

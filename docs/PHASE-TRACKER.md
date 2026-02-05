@@ -1,6 +1,6 @@
 # Phase Tracker
 
-> Development phase status for EA Platform (bridebook-v2)
+> Development phase status for EA Platform (bloghead-v2)
 
 **Last Updated:** 2026-02-03
 
@@ -21,7 +21,7 @@
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Create GitHub repository | DONE | ElSalvatore-sys/bridebook-v2 |
+| Create GitHub repository | DONE | ElSalvatore-sys/bloghead-v2 |
 | Setup folder structure | DONE | docs/, .github/, etc. |
 | Copy research files | DONE | 14 files from bridebook-research |
 | Write PRD | DONE | docs/phase-00-discovery/PRD.md |

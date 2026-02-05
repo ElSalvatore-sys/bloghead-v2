@@ -46,23 +46,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true)
 
   const fetchProfile = useCallback(async (userId: string) => {
+    console.log('[Auth] fetchProfile called for:', userId)
     try {
+      // Add timeout to prevent hanging on RLS issues
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
+        .abortSignal(controller.signal)
         .single()
 
+      clearTimeout(timeoutId)
+
       if (error) {
-        // Profile might not exist yet (new user)
-        console.warn('Could not fetch profile:', error.message)
+        // Profile might not exist yet (new user) or RLS blocked
+        console.warn('[Auth] Could not fetch profile:', error.message)
         setProfile(null)
         return
       }
 
+      console.log('[Auth] Profile loaded:', data?.email)
       setProfile(data)
     } catch (err) {
-      console.error('Error fetching profile:', err)
+      console.error('[Auth] Error fetching profile:', err)
       setProfile(null)
     }
   }, [])
@@ -76,20 +85,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     // Get initial session
     const initializeAuth = async () => {
+      console.log('[Auth] Initializing...')
       try {
+        console.log('[Auth] Getting session...')
         const {
           data: { session: initialSession },
+          error: sessionError,
         } = await supabase.auth.getSession()
 
+        if (sessionError) {
+          console.error('[Auth] Session error:', sessionError)
+        }
+
+        console.log('[Auth] Session:', initialSession ? 'found' : 'none')
         setSession(initialSession)
         setUser(initialSession?.user ?? null)
 
         if (initialSession?.user) {
+          console.log('[Auth] Fetching profile...')
           await fetchProfile(initialSession.user.id)
+          console.log('[Auth] Profile fetched')
         }
       } catch (err) {
-        console.error('Error initializing auth:', err)
+        console.error('[Auth] Error initializing auth:', err)
       } finally {
+        console.log('[Auth] Done, setting loading=false')
         setLoading(false)
       }
     }
@@ -147,7 +167,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const signOut = async (): Promise<void> => {
-    await supabase.auth.signOut()
+    // Clear React state immediately
+    setUser(null)
+    setSession(null)
+    setProfile(null)
+
+    // Use scope:'local' to clear localStorage without a network call (can't hang)
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch {
+      // Ignore - hard redirect below will reset everything
+    }
+
+    // Hard redirect to guarantee clean state
+    window.location.href = '/login'
   }
 
   const signInWithGoogle = async (): Promise<{ error: AuthError | null }> => {
@@ -164,7 +197,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     email: string
   ): Promise<{ error: AuthError | null }> => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${window.location.origin}/reset-password`,
     })
     return { error }
   }
