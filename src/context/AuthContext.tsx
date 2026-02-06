@@ -46,23 +46,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchProfile = useCallback(async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string, signal?: AbortSignal) => {
     console.log('[Auth] fetchProfile called for:', userId)
     try {
-      // Add timeout to prevent hanging on RLS issues
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      // Use provided signal (from useEffect cleanup) or create a local 5s timeout
+      let localController: AbortController | undefined
+      let timeoutId: ReturnType<typeof setTimeout> | undefined
+      const effectiveSignal = signal ?? (() => {
+        localController = new AbortController()
+        timeoutId = setTimeout(() => localController!.abort(), 5000)
+        return localController.signal
+      })()
 
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .abortSignal(controller.signal)
+        .abortSignal(effectiveSignal)
         .single()
 
-      clearTimeout(timeoutId)
+      if (timeoutId) clearTimeout(timeoutId)
 
       if (error) {
+        // AbortError from StrictMode cleanup — ignore silently
+        if (error.message?.includes('aborted')) {
+          console.debug('[Auth] Profile fetch aborted (expected during cleanup)')
+          return  // Don't set profile to null — the re-mount will fetch it
+        }
         // Profile might not exist yet (new user) or RLS blocked
         console.warn('[Auth] Could not fetch profile:', error.message)
         setProfile(null)
@@ -72,6 +82,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log('[Auth] Profile loaded:', data?.email)
       setProfile(data)
     } catch (err) {
+      // AbortError is expected during StrictMode cleanup — ignore silently
+      if (err instanceof Error && (err.name === 'AbortError' || err.message?.includes('aborted'))) {
+        console.debug('[Auth] Profile fetch aborted (expected during cleanup)')
+        return
+      }
       console.error('[Auth] Error fetching profile:', err)
       setProfile(null)
     }
@@ -84,6 +99,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [user, fetchProfile])
 
   useEffect(() => {
+    const abortController = new AbortController()
+
     // Get initial session
     const initializeAuth = async () => {
       console.log('[Auth] Initializing...')
@@ -95,6 +112,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } = await supabase.auth.getSession()
 
         if (sessionError) {
+          if (sessionError.message?.includes('aborted')) {
+            console.debug('[Auth] Session fetch aborted (expected during cleanup)')
+            return
+          }
           console.error('[Auth] Session error:', sessionError)
         }
 
@@ -104,10 +125,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (initialSession?.user) {
           console.log('[Auth] Fetching profile...')
-          await fetchProfile(initialSession.user.id)
+          await fetchProfile(initialSession.user.id, abortController.signal)
           console.log('[Auth] Profile fetched')
         }
       } catch (err) {
+        if (err instanceof Error && (err.name === 'AbortError' || err.message?.includes('aborted'))) {
+          console.debug('[Auth] Auth init aborted (expected during cleanup)')
+          return
+        }
         console.error('[Auth] Error initializing auth:', err)
       } finally {
         console.log('[Auth] Done, setting loading=false')
@@ -137,6 +162,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     })
 
     return () => {
+      abortController.abort()
       subscription.unsubscribe()
     }
   }, [fetchProfile])
