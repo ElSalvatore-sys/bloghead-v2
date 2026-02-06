@@ -27,12 +27,13 @@ export const germanPostalCodeSchema = z
 
 /**
  * Email with normalization
+ * Note: trim() before email() to handle whitespace
  */
 export const emailSchema = z
   .string()
-  .email('Please enter a valid email address')
-  .toLowerCase()
   .trim()
+  .toLowerCase()
+  .email('Please enter a valid email address')
 
 /**
  * Password with complexity requirements
