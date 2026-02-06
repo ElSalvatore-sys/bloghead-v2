@@ -22,3 +22,10 @@ export {
   type VenueAmenity,
   type VenueMedia,
 } from './venues'
+
+export {
+  FavoriteService,
+  type Favorite,
+  type FavoriteWithVendor,
+  type FavoriteType,
+} from './favorites'

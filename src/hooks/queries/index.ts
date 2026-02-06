@@ -34,3 +34,24 @@ export {
   useUpdateVenue,
   useDeleteVenue,
 } from './use-venues'
+
+// Favorite hooks and keys
+export {
+  favoriteKeys,
+  useFavorites,
+  useFavoritesByType,
+  useIsFavorite,
+  useToggleFavorite,
+  useAddFavorite,
+  useRemoveFavorite,
+} from './use-favorites'
+
+// Vendor search hooks
+export {
+  vendorSearchKeys,
+  useVendorSearch,
+  useVenueSearch,
+  useArtistSearch,
+  getTotalCount,
+  flattenPages,
+} from './use-vendor-search'
