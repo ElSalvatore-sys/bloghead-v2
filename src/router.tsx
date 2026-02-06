@@ -37,6 +37,12 @@ const ArtistDetailPage = lazy(() =>
 const VenueDetailPage = lazy(() =>
   import('@/pages/discovery/VenueDetailPage').then((m) => ({ default: m.VenueDetailPage }))
 )
+const FavoritesPage = lazy(() =>
+  import('@/pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage }))
+)
+const BookingsPage = lazy(() =>
+  import('@/pages/BookingsPage').then((m) => ({ default: m.BookingsPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -160,6 +166,22 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <VenueDetailPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'favorites',
+            element: (
+              <LazyPage>
+                <FavoritesPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'bookings',
+            element: (
+              <LazyPage>
+                <BookingsPage />
               </LazyPage>
             ),
           },

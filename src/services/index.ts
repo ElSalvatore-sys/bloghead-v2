@@ -34,6 +34,15 @@ export {
   type FavoriteType,
 } from './favorites'
 
+export {
+  BookingService,
+  type BookingRequest,
+  type BookingWithDetails,
+  type BookingDetail,
+  type BookingStatus,
+  type BookingRequestEvent,
+} from './booking'
+
 export { AvailabilityService, type Availability } from './availability'
 
 export { GenreService, type Genre } from './genres'

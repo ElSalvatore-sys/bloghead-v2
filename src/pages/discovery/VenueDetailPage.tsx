@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FavoriteButton } from '@/components/discovery/FavoriteButton'
+import { BookingRequestModal } from '@/components/booking'
 import {
   BackButton,
   ShareButton,
@@ -15,7 +16,9 @@ import {
   ReviewsPlaceholder,
   SimilarEntities,
 } from '@/components/detail'
-import { useVenue } from '@/hooks/queries'
+import { useVenue, useArtistByProfile } from '@/hooks/queries'
+import { useAuth } from '@/context/AuthContext'
+import { useUIStore } from '@/stores'
 
 const VENUE_TYPE_LABELS: Record<string, string> = {
   BAR: 'Bar',
@@ -30,6 +33,18 @@ export function VenueDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data: venue, isLoading, error } = useVenue(id ?? '')
   const [descExpanded, setDescExpanded] = useState(false)
+  const { profile } = useAuth()
+  const { data: userArtist } = useArtistByProfile(profile?.id ?? '')
+  const openModal = useUIStore((s) => s.openModal)
+
+  const handleBookingClick = () => {
+    openModal('booking-request', {
+      venueId: venue?.id,
+      venueName: venue?.venue_name,
+      artistId: userArtist?.id,
+      entityType: 'venue',
+    })
+  }
 
   useEffect(() => {
     if (venue) {
@@ -173,12 +188,15 @@ export function VenueDetailPage() {
                 <ContactInfo
                   instagram={venue.instagram}
                   website={venue.website}
+                  onBookingClick={handleBookingClick}
                 />
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
+
+      <BookingRequestModal />
     </div>
   )
 }

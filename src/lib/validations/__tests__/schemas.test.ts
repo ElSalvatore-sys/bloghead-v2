@@ -18,7 +18,7 @@ import {
   signupSchema,
   resetPasswordSchema,
 } from '../auth'
-import { bookingEnquirySchema } from '../vendor'
+import { createBookingRequestSchema } from '../vendor'
 import { createArtistSchema } from '../artist'
 import { createVenueSchema } from '../venue'
 import { createEventSchema } from '../event'
@@ -337,154 +337,96 @@ describe('Auth Schemas', () => {
   })
 })
 
-// ========== BOOKING ENQUIRY SCHEMA (CRITICAL) ==========
+// ========== BOOKING REQUEST SCHEMA ==========
 
-describe('Booking Enquiry Schema', () => {
+describe('Booking Request Schema', () => {
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
   const tomorrowStr = tomorrow.toISOString().split('T')[0]
 
-  const validEnquiry = {
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+4915112345678',
+  const validRequest = {
+    title: 'Summer DJ Night',
     event_date: tomorrowStr,
-    guest_count: 100,
-    budget_range: '5000_10000' as const,
-    message: 'We are looking for a DJ for our corporate event on the above date.',
-    flexible_on_date: false,
+    start_time: '20:00',
+    end_time: '23:00',
+    description: 'Looking for a DJ for our summer event.',
+    proposed_rate: 500,
   }
 
-  it('accepts valid enquiry data', () => {
-    const result = bookingEnquirySchema.safeParse(validEnquiry)
+  it('accepts valid booking request data', () => {
+    const result = createBookingRequestSchema.safeParse(validRequest)
     expect(result.success).toBe(true)
   })
 
-  describe('name field', () => {
-    it('rejects empty name', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        name: '',
-      })
-      expect(result.success).toBe(false)
+  it('accepts request without optional fields', () => {
+    const result = createBookingRequestSchema.safeParse({
+      title: 'Event',
+      event_date: tomorrowStr,
+      start_time: '18:00',
+      end_time: '22:00',
     })
-
-    it('rejects name over 100 chars', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        name: 'a'.repeat(101),
-      })
-      expect(result.success).toBe(false)
-    })
+    expect(result.success).toBe(true)
   })
 
-  describe('email field', () => {
-    it('requires valid email', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        email: 'invalid',
-      })
-      expect(result.success).toBe(false)
-    })
-  })
-
-  describe('phone field', () => {
-    it('requires German phone format', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        phone: '+1555123456',
+  describe('title field', () => {
+    it('rejects empty title', () => {
+      const result = createBookingRequestSchema.safeParse({
+        ...validRequest,
+        title: '',
       })
       expect(result.success).toBe(false)
     })
 
-    it('allows null phone', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        phone: null,
+    it('rejects title over 200 chars', () => {
+      const result = createBookingRequestSchema.safeParse({
+        ...validRequest,
+        title: 'a'.repeat(201),
       })
-      expect(result.success).toBe(true)
+      expect(result.success).toBe(false)
     })
   })
 
   describe('event_date field', () => {
     it('requires future date', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
+      const result = createBookingRequestSchema.safeParse({
+        ...validRequest,
         event_date: '2020-01-01',
       })
       expect(result.success).toBe(false)
     })
   })
 
-  describe('guest_count field', () => {
-    it('requires integer', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        guest_count: 100.5,
+  describe('time fields', () => {
+    it('requires HH:MM format for start_time', () => {
+      const result = createBookingRequestSchema.safeParse({
+        ...validRequest,
+        start_time: '8pm',
       })
       expect(result.success).toBe(false)
     })
 
-    it('requires at least 1', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        guest_count: 0,
-      })
-      expect(result.success).toBe(false)
-    })
-
-    it('rejects over 10000', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        guest_count: 10001,
+    it('requires HH:MM format for end_time', () => {
+      const result = createBookingRequestSchema.safeParse({
+        ...validRequest,
+        end_time: 'invalid',
       })
       expect(result.success).toBe(false)
     })
   })
 
-  describe('budget_range field', () => {
-    it('accepts valid enum values', () => {
-      const ranges = [
-        'under_1000',
-        '1000_2500',
-        '2500_5000',
-        '5000_10000',
-        'over_10000',
-      ]
-      for (const range of ranges) {
-        const result = bookingEnquirySchema.safeParse({
-          ...validEnquiry,
-          budget_range: range,
-        })
-        expect(result.success).toBe(true)
-      }
-    })
-
-    it('rejects invalid budget range', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        budget_range: 'invalid',
+  describe('proposed_rate field', () => {
+    it('rejects negative rate', () => {
+      const result = createBookingRequestSchema.safeParse({
+        ...validRequest,
+        proposed_rate: -1,
       })
       expect(result.success).toBe(false)
     })
-  })
 
-  describe('message field', () => {
-    it('requires at least 20 characters', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        message: 'Too short',
-      })
-      expect(result.success).toBe(false)
-      if (!result.success) {
-        expect(result.error.issues[0].message).toContain('at least 20')
-      }
-    })
-
-    it('rejects over 2000 characters', () => {
-      const result = bookingEnquirySchema.safeParse({
-        ...validEnquiry,
-        message: 'a'.repeat(2001),
+    it('rejects rate over 999999', () => {
+      const result = createBookingRequestSchema.safeParse({
+        ...validRequest,
+        proposed_rate: 1000000,
       })
       expect(result.success).toBe(false)
     })

@@ -66,11 +66,10 @@ export {
 
 // Vendor/Booking
 export {
-  bookingEnquirySchema,
+  createBookingRequestSchema,
   vendorReviewSchema,
-  type BookingEnquiryInput,
+  type CreateBookingRequestInput,
   type VendorReviewInput,
-  type BudgetRange,
 } from './vendor'
 
 // Planning

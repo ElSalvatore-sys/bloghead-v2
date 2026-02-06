@@ -13,6 +13,8 @@ import {
   FavoriteService,
   type FavoriteWithVendor,
   type FavoriteType,
+  type ArtistDiscoverResult,
+  type VenueDiscoverResult,
 } from '@/services'
 import { showError } from '@/lib/toast'
 
@@ -73,6 +75,26 @@ export function useIsFavorite(
     queryFn: () => FavoriteService.checkIsFavorite(vendorId, vendorType),
     enabled: !!vendorId,
     ...options,
+  })
+}
+
+/**
+ * Hook to get enriched favorite artists (for card display)
+ */
+export function useFavoriteArtistsEnriched() {
+  return useQuery<ArtistDiscoverResult[], Error>({
+    queryKey: [...favoriteKeys.lists(), 'artists-enriched'] as const,
+    queryFn: () => FavoriteService.getFavoriteArtistsEnriched(),
+  })
+}
+
+/**
+ * Hook to get enriched favorite venues (for card display)
+ */
+export function useFavoriteVenuesEnriched() {
+  return useQuery<VenueDiscoverResult[], Error>({
+    queryKey: [...favoriteKeys.lists(), 'venues-enriched'] as const,
+    queryFn: () => FavoriteService.getFavoriteVenuesEnriched(),
   })
 }
 

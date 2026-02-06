@@ -4,6 +4,8 @@ import {
   Calendar,
   Music,
   MapPin,
+  Heart,
+  CalendarCheck,
   MessageSquare,
   Settings,
   HelpCircle,
@@ -20,6 +22,8 @@ const navItems = [
   { name: 'events', label: 'Events', icon: Calendar, href: '/events' },
   { name: 'artists', label: 'Artists', icon: Music, href: '/artists' },
   { name: 'venues', label: 'Venues', icon: MapPin, href: '/venues' },
+  { name: 'favorites', label: 'Favorites', icon: Heart, href: '/favorites' },
+  { name: 'bookings', label: 'Bookings', icon: CalendarCheck, href: '/bookings' },
   { name: 'messages', label: 'Messages', icon: MessageSquare, href: '/messages' },
   { name: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
 ]

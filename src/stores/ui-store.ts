@@ -15,6 +15,7 @@ export type ModalType =
   | 'vendor-preview'
   | 'image-gallery'
   | 'share-event'
+  | 'booking-request'
   | null
 
 interface UIState {

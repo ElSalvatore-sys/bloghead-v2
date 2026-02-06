@@ -1,61 +1,23 @@
 /**
  * Vendor validation schemas
- * Enquiry form (critical conversion!) and review form
+ * Booking request form and review form
  */
 
 import { z } from 'zod'
-import {
-  requiredString,
-  emailSchema,
-  germanPhoneSchema,
-  futureDateSchema,
-  uuidSchema,
-} from './common'
+import { requiredString, futureDateSchema, uuidSchema } from './common'
 
 /**
- * Budget range options for enquiry form
+ * Booking request form schema
+ * Matches the booking_requests table columns
+ * artist_id, venue_id, requester_id are added at the service layer
  */
-const budgetRanges = [
-  'under_1000',
-  '1000_2500',
-  '2500_5000',
-  '5000_10000',
-  'over_10000',
-] as const
-
-/**
- * Booking enquiry form schema
- * CRITICAL CONVERSION FORM - keep fields minimal but useful
- */
-export const bookingEnquirySchema = z.object({
-  // Contact info
-  name: requiredString('Your name').max(100, 'Name is too long'),
-  email: emailSchema,
-  phone: germanPhoneSchema,
-
-  // Event details
+export const createBookingRequestSchema = z.object({
+  title: requiredString('Event title').max(200, 'Title is too long'),
   event_date: futureDateSchema,
-  guest_count: z
-    .number()
-    .int('Guest count must be a whole number')
-    .min(1, 'Guest count is required')
-    .max(10000, 'Guest count is too high'),
-
-  // Budget
-  budget_range: z.enum(budgetRanges, {
-    error: 'Please select a budget range',
-  }),
-
-  // Message
-  message: requiredString('Message')
-    .min(20, 'Please provide more details (at least 20 characters)')
-    .max(2000, 'Message is too long'),
-
-  // Preferences
-  flexible_on_date: z.boolean().default(false),
-
-  // Optional event reference (if logged in)
-  event_id: uuidSchema.optional(),
+  start_time: z.string().regex(/^\d{2}:\d{2}$/, 'Use HH:MM format'),
+  end_time: z.string().regex(/^\d{2}:\d{2}$/, 'Use HH:MM format'),
+  description: z.string().max(2000, 'Description is too long').optional(),
+  proposed_rate: z.number().min(0, 'Rate must be positive').max(999999).optional(),
 })
 
 /**
@@ -89,6 +51,5 @@ export const vendorReviewSchema = z.object({
 })
 
 // Type exports
-export type BookingEnquiryInput = z.infer<typeof bookingEnquirySchema>
+export type CreateBookingRequestInput = z.infer<typeof createBookingRequestSchema>
 export type VendorReviewInput = z.infer<typeof vendorReviewSchema>
-export type BudgetRange = (typeof budgetRanges)[number]

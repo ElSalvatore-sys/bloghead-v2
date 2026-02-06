@@ -45,11 +45,23 @@ export {
   favoriteKeys,
   useFavorites,
   useFavoritesByType,
+  useFavoriteArtistsEnriched,
+  useFavoriteVenuesEnriched,
   useIsFavorite,
   useToggleFavorite,
   useAddFavorite,
   useRemoveFavorite,
 } from './use-favorites'
+
+// Booking hooks and keys
+export {
+  bookingKeys,
+  useUserBookings,
+  useProviderBookings,
+  useBooking,
+  useCreateBooking,
+  useUpdateBookingStatus,
+} from './use-booking'
 
 // Vendor search hooks
 export {
