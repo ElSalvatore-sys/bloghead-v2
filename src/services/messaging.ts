@@ -7,6 +7,8 @@ import { supabase } from './supabase'
 import type { Tables } from '@/types/database'
 import { handleSupabaseError, UnauthorizedError } from '@/lib/errors'
 import { sendMessageSchema } from '@/lib/validations'
+import { EmailService } from './email'
+import { messageNewTemplate } from '@/lib/email-templates'
 
 export type MessageThread = Tables<'message_threads'>
 export type Message = Tables<'messages'>
@@ -229,7 +231,69 @@ export class MessagingService {
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', threadId)
 
+    // Send email notification to the other participant (fire-and-forget)
+    this.sendMessageEmail(threadId, user.id, validated.content).catch(() => {})
+
     return data
+  }
+
+  /**
+   * Send new message email to the other participant in the thread
+   */
+  private static async sendMessageEmail(
+    threadId: string,
+    senderId: string,
+    content: string
+  ): Promise<void> {
+    // Get thread to find the other participant
+    const { data: thread } = await supabase
+      .from('message_threads')
+      .select('participant_one_id, participant_two_id')
+      .eq('id', threadId)
+      .single()
+
+    if (!thread) return
+
+    const recipientId =
+      thread.participant_one_id === senderId
+        ? thread.participant_two_id
+        : thread.participant_one_id
+
+    // Get sender and recipient profiles
+    const [senderResult, recipientResult] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('id', senderId)
+        .single(),
+      supabase
+        .from('profiles')
+        .select('id, email, first_name')
+        .eq('id', recipientId)
+        .single(),
+    ])
+
+    if (!recipientResult.data?.email || !senderResult.data) return
+
+    const senderName =
+      [senderResult.data.first_name, senderResult.data.last_name]
+        .filter(Boolean)
+        .join(' ') || 'Someone'
+
+    const emailContent = messageNewTemplate({
+      recipientName: recipientResult.data.first_name || 'there',
+      senderName,
+      messagePreview: content,
+      threadId,
+    })
+
+    await EmailService.send(
+      'message-new',
+      recipientResult.data.id,
+      recipientResult.data.email,
+      emailContent,
+      { thread_id: threadId }
+    )
   }
 
   /**

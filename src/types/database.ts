@@ -554,6 +554,88 @@ export type Database = {
           },
         ]
       }
+      email_logs: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json
+          recipient_email: string
+          recipient_id: string | null
+          resend_id: string | null
+          status: string
+          subject: string
+          template: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json
+          recipient_email: string
+          recipient_id?: string | null
+          resend_id?: string | null
+          status?: string
+          subject: string
+          template: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json
+          recipient_email?: string
+          recipient_id?: string | null
+          resend_id?: string | null
+          status?: string
+          subject?: string
+          template?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_preferences: {
+        Row: {
+          booking_emails: boolean
+          created_at: string
+          id: string
+          marketing_emails: boolean
+          message_emails: boolean
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          booking_emails?: boolean
+          created_at?: string
+          id?: string
+          marketing_emails?: boolean
+          message_emails?: boolean
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          booking_emails?: boolean
+          created_at?: string
+          id?: string
+          marketing_emails?: boolean
+          message_emails?: boolean
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_preferences_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       genres: {
         Row: {
           created_at: string

@@ -108,3 +108,10 @@ export {
   useEntityMedia,
   useSetPrimaryMedia,
 } from './use-media'
+
+// Email preference hooks
+export {
+  emailPreferenceKeys,
+  useEmailPreferences,
+  useUpdateEmailPreferences,
+} from './use-email-preferences'

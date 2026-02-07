@@ -97,6 +97,12 @@ export {
   type VenueSearchFilters as VenueSearchFilterInput,
 } from './search'
 
+// Email
+export {
+  emailPreferencesSchema,
+  type EmailPreferencesInput,
+} from './email'
+
 // Planning
 export {
   createTaskSchema,

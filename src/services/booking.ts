@@ -10,6 +10,8 @@ import {
   createBookingRequestSchema,
   type CreateBookingRequestInput,
 } from '@/lib/validations'
+import { EmailService } from './email'
+import { bookingNewTemplate, bookingStatusTemplate } from '@/lib/email-templates'
 
 export type BookingRequest = Tables<'booking_requests'>
 export type BookingStatus = Enums<'booking_status'>
@@ -68,7 +70,81 @@ export class BookingService {
       note: 'Booking request created',
     })
 
+    // Send email notification to the booking recipient (fire-and-forget)
+    this.sendBookingNewEmail(data, user.id).catch(() => {})
+
     return data
+  }
+
+  /**
+   * Send new booking email to the artist/venue owner
+   */
+  private static async sendBookingNewEmail(
+    booking: BookingRequest,
+    requesterId: string
+  ): Promise<void> {
+    // Get requester profile
+    const { data: requester } = await supabase
+      .from('profiles')
+      .select('first_name, last_name')
+      .eq('id', requesterId)
+      .single()
+
+    if (!requester) return
+
+    // Get recipient — artist or venue owner
+    const [artistResult, venueResult] = await Promise.all([
+      booking.artist_id
+        ? supabase
+            .from('artists')
+            .select('profile_id, stage_name')
+            .eq('id', booking.artist_id)
+            .single()
+        : Promise.resolve({ data: null }),
+      booking.venue_id
+        ? supabase
+            .from('venues')
+            .select('profile_id, venue_name')
+            .eq('id', booking.venue_id)
+            .single()
+        : Promise.resolve({ data: null }),
+    ])
+
+    // Determine the recipient (the party the requester is booking)
+    const recipientProfileId =
+      artistResult.data?.profile_id ?? venueResult.data?.profile_id
+    if (!recipientProfileId || recipientProfileId === requesterId) return
+
+    const { data: recipient } = await supabase
+      .from('profiles')
+      .select('id, email, first_name')
+      .eq('id', recipientProfileId)
+      .single()
+
+    if (!recipient?.email) return
+
+    const requesterName =
+      [requester.first_name, requester.last_name].filter(Boolean).join(' ') ||
+      'Someone'
+
+    const emailContent = bookingNewTemplate({
+      recipientName: recipient.first_name || 'there',
+      requesterName,
+      title: booking.title,
+      eventDate: booking.event_date,
+      startTime: booking.start_time,
+      endTime: booking.end_time,
+      proposedRate: booking.proposed_rate?.toString() ?? null,
+      bookingId: booking.id,
+    })
+
+    await EmailService.send(
+      'booking-new',
+      recipient.id,
+      recipient.email,
+      emailContent,
+      { booking_id: booking.id }
+    )
   }
 
   /**
@@ -237,6 +313,49 @@ export class BookingService {
       note: note ?? null,
     })
 
+    // Send status change email to the requester (fire-and-forget)
+    this.sendBookingStatusEmail(
+      data,
+      current.status,
+      newStatus,
+      note ?? null
+    ).catch(() => {})
+
     return data
+  }
+
+  /**
+   * Send booking status change email to the requester
+   */
+  private static async sendBookingStatusEmail(
+    booking: BookingRequest,
+    previousStatus: string,
+    newStatus: string,
+    note: string | null
+  ): Promise<void> {
+    const { data: requester } = await supabase
+      .from('profiles')
+      .select('id, email, first_name')
+      .eq('id', booking.requester_id)
+      .single()
+
+    if (!requester?.email) return
+
+    const emailContent = bookingStatusTemplate({
+      recipientName: requester.first_name || 'there',
+      title: booking.title,
+      previousStatus,
+      newStatus,
+      note,
+      bookingId: booking.id,
+    })
+
+    await EmailService.send(
+      'booking-status',
+      requester.id,
+      requester.email,
+      emailContent,
+      { booking_id: booking.id }
+    )
   }
 }

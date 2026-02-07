@@ -80,3 +80,5 @@ export {
   type ArtistMedia as ArtistMediaRecord,
   type VenueMedia as VenueMediaRecord,
 } from './media'
+
+export { EmailService, type EmailPreferences } from './email'

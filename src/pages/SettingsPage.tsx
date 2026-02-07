@@ -4,8 +4,15 @@
  */
 
 import { useEffect } from 'react'
-import { AlertCircle } from 'lucide-react'
-import { useCurrentProfile, useUpdateProfile, useUploadAvatar } from '@/hooks'
+import { useSearchParams } from 'react-router-dom'
+import { AlertCircle, Mail } from 'lucide-react'
+import {
+  useCurrentProfile,
+  useUpdateProfile,
+  useUploadAvatar,
+  useEmailPreferences,
+  useUpdateEmailPreferences,
+} from '@/hooks'
 import { isAbortError } from '@/lib/errors'
 import { useZodForm } from '@/lib/forms/use-zod-form'
 import { updateProfileSchema, type UpdateProfileInput } from '@/lib/validations'
@@ -23,12 +30,26 @@ import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 import { AvatarUpload } from '@/components/upload/AvatarUpload'
 
 export function SettingsPage() {
+  const [searchParams] = useSearchParams()
   const { data: profile, isLoading, isError, error } = useCurrentProfile()
   const updateProfile = useUpdateProfile()
   const uploadAvatar = useUploadAvatar()
+  const { data: emailPrefs, isLoading: emailPrefsLoading } =
+    useEmailPreferences()
+  const updateEmailPrefs = useUpdateEmailPreferences()
+
+  // Scroll to notifications section when ?tab=notifications
+  useEffect(() => {
+    if (searchParams.get('tab') === 'notifications') {
+      document
+        .getElementById('notifications')
+        ?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [searchParams])
 
   const form = useZodForm(updateProfileSchema, {
     defaultValues: {
@@ -189,6 +210,85 @@ export function SettingsPage() {
           </form>
         </CardContent>
       </Card>
+
+      {/* Email Notifications */}
+      <Card id="notifications" data-testid="email-preferences-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mail className="h-5 w-5" />
+            Email Notifications
+          </CardTitle>
+          <CardDescription>
+            Choose which email notifications you want to receive
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {emailPrefsLoading ? (
+            <LoadingSpinner fullScreen={false} />
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="booking-emails">Booking updates</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Get notified when you receive or update a booking
+                  </p>
+                </div>
+                <Switch
+                  id="booking-emails"
+                  data-testid="toggle-booking-emails"
+                  checked={emailPrefs?.booking_emails ?? true}
+                  disabled={updateEmailPrefs.isPending}
+                  onCheckedChange={(checked) =>
+                    updateEmailPrefs.mutate({ booking_emails: checked })
+                  }
+                />
+              </div>
+
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="message-emails">New messages</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Get notified when someone sends you a message
+                  </p>
+                </div>
+                <Switch
+                  id="message-emails"
+                  data-testid="toggle-message-emails"
+                  checked={emailPrefs?.message_emails ?? true}
+                  disabled={updateEmailPrefs.isPending}
+                  onCheckedChange={(checked) =>
+                    updateEmailPrefs.mutate({ message_emails: checked })
+                  }
+                />
+              </div>
+
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="marketing-emails">Marketing</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Occasional updates about new features
+                  </p>
+                </div>
+                <Switch
+                  id="marketing-emails"
+                  data-testid="toggle-marketing-emails"
+                  checked={emailPrefs?.marketing_emails ?? false}
+                  disabled={updateEmailPrefs.isPending}
+                  onCheckedChange={(checked) =>
+                    updateEmailPrefs.mutate({ marketing_emails: checked })
+                  }
+                />
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
     </div>
   )
 }
