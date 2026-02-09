@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FavoriteButton } from '@/components/discovery/FavoriteButton'
 import { RatingStars } from '@/components/discovery/RatingStars'
-import { BookingRequestModal } from '@/components/booking'
+import { EnquiryModal } from '@/components/enquiry'
 import {
   BackButton,
   ShareButton,
@@ -17,9 +17,7 @@ import {
   ReviewsPlaceholder,
   SimilarEntities,
 } from '@/components/detail'
-import { useVenue, useArtistByProfile, useGetOrCreateThread } from '@/hooks/queries'
-import { useAuth } from '@/context/AuthContext'
-import { useUIStore } from '@/stores'
+import { useVenue, useGetOrCreateThread } from '@/hooks/queries'
 
 const VENUE_TYPE_LABELS: Record<string, string> = {
   BAR: 'Bar',
@@ -34,9 +32,7 @@ export function VenueDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data: venue, isLoading, error } = useVenue(id ?? '')
   const [descExpanded, setDescExpanded] = useState(false)
-  const { profile } = useAuth()
-  const { data: userArtist } = useArtistByProfile(profile?.id ?? '')
-  const openModal = useUIStore((s) => s.openModal)
+  const [enquiryOpen, setEnquiryOpen] = useState(false)
   const navigate = useNavigate()
   const getOrCreateThread = useGetOrCreateThread()
 
@@ -48,13 +44,8 @@ export function VenueDetailPage() {
     )
   }
 
-  const handleBookingClick = () => {
-    openModal('booking-request', {
-      venueId: venue?.id,
-      venueName: venue?.venue_name,
-      artistId: userArtist?.id,
-      entityType: 'venue',
-    })
+  const handleEnquiryClick = () => {
+    setEnquiryOpen(true)
   }
 
   useEffect(() => {
@@ -221,7 +212,7 @@ export function VenueDetailPage() {
                 <ContactInfo
                   instagram={venue.instagram}
                   website={venue.website}
-                  onBookingClick={handleBookingClick}
+                  onEnquiryClick={handleEnquiryClick}
                   onMessageClick={handleMessageClick}
                 />
               </CardContent>
@@ -230,7 +221,13 @@ export function VenueDetailPage() {
         </div>
       </div>
 
-      <BookingRequestModal />
+      <EnquiryModal
+        open={enquiryOpen}
+        onOpenChange={setEnquiryOpen}
+        entityType="VENUE"
+        entityId={venue.id}
+        entityName={venue.venue_name}
+      />
 
       {/* Sticky mobile booking bar */}
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background p-4 lg:hidden">
@@ -238,8 +235,8 @@ export function VenueDetailPage() {
           <Button variant="outline" className="flex-1" onClick={handleMessageClick}>
             Message
           </Button>
-          <Button className="flex-1" onClick={handleBookingClick}>
-            Book Now
+          <Button className="flex-1" onClick={handleEnquiryClick}>
+            Send Enquiry
           </Button>
         </div>
       </div>

@@ -40,6 +40,9 @@ const VenueDetailPage = lazy(() =>
 const FavoritesPage = lazy(() =>
   import('@/pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage }))
 )
+const EnquiriesPage = lazy(() =>
+  import('@/pages/EnquiriesPage').then((m) => ({ default: m.EnquiriesPage }))
+)
 const BookingsPage = lazy(() =>
   import('@/pages/BookingsPage').then((m) => ({ default: m.BookingsPage }))
 )
@@ -186,6 +189,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <FavoritesPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'enquiries',
+            element: (
+              <LazyPage>
+                <EnquiriesPage />
               </LazyPage>
             ),
           },

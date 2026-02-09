@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FavoriteButton } from '@/components/discovery/FavoriteButton'
 import { RatingStars } from '@/components/discovery/RatingStars'
-import { BookingRequestModal } from '@/components/booking'
+import { EnquiryModal } from '@/components/enquiry'
 import {
   BackButton,
   ShareButton,
@@ -18,17 +18,13 @@ import {
   ReviewsPlaceholder,
   SimilarEntities,
 } from '@/components/detail'
-import { useArtist, useVenueByProfile, useGetOrCreateThread } from '@/hooks/queries'
-import { useAuth } from '@/context/AuthContext'
-import { useUIStore } from '@/stores'
+import { useArtist, useGetOrCreateThread } from '@/hooks/queries'
 
 export function ArtistDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data: artist, isLoading, error } = useArtist(id ?? '')
   const [bioExpanded, setBioExpanded] = useState(false)
-  const { profile } = useAuth()
-  const { data: userVenue } = useVenueByProfile(profile?.id ?? '')
-  const openModal = useUIStore((s) => s.openModal)
+  const [enquiryOpen, setEnquiryOpen] = useState(false)
   const navigate = useNavigate()
   const getOrCreateThread = useGetOrCreateThread()
 
@@ -40,13 +36,8 @@ export function ArtistDetailPage() {
     )
   }
 
-  const handleBookingClick = () => {
-    openModal('booking-request', {
-      artistId: artist?.id,
-      artistName: artist?.stage_name,
-      venueId: userVenue?.id,
-      entityType: 'artist',
-    })
+  const handleEnquiryClick = () => {
+    setEnquiryOpen(true)
   }
 
   useEffect(() => {
@@ -194,7 +185,7 @@ export function ArtistDetailPage() {
                   soundcloud={artist.soundcloud}
                   spotify={artist.spotify}
                   website={artist.website}
-                  onBookingClick={handleBookingClick}
+                  onEnquiryClick={handleEnquiryClick}
                   onMessageClick={handleMessageClick}
                 />
               </CardContent>
@@ -203,7 +194,13 @@ export function ArtistDetailPage() {
         </div>
       </div>
 
-      <BookingRequestModal />
+      <EnquiryModal
+        open={enquiryOpen}
+        onOpenChange={setEnquiryOpen}
+        entityType="ARTIST"
+        entityId={artist.id}
+        entityName={artist.stage_name}
+      />
 
       {/* Sticky mobile booking bar */}
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background p-4 lg:hidden">
@@ -214,7 +211,7 @@ export function ArtistDetailPage() {
               {artist.hourly_rate !== null ? `$${artist.hourly_rate}/hr` : 'Contact for pricing'}
             </p>
           </div>
-          <Button onClick={handleBookingClick}>Book Now</Button>
+          <Button onClick={handleEnquiryClick}>Send Enquiry</Button>
         </div>
       </div>
     </div>

@@ -636,6 +636,79 @@ export type Database = {
           },
         ]
       }
+      enquiries: {
+        Row: {
+          id: string
+          sender_id: string
+          entity_type: Database["public"]["Enums"]["favorite_type"]
+          artist_id: string | null
+          venue_id: string | null
+          enquiry_type: Database["public"]["Enums"]["enquiry_type"]
+          status: Database["public"]["Enums"]["enquiry_status"]
+          name: string
+          email: string
+          phone: string | null
+          message: string
+          event_date: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          sender_id: string
+          entity_type: Database["public"]["Enums"]["favorite_type"]
+          artist_id?: string | null
+          venue_id?: string | null
+          enquiry_type?: Database["public"]["Enums"]["enquiry_type"]
+          status?: Database["public"]["Enums"]["enquiry_status"]
+          name: string
+          email: string
+          phone?: string | null
+          message: string
+          event_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          sender_id?: string
+          entity_type?: Database["public"]["Enums"]["favorite_type"]
+          artist_id?: string | null
+          venue_id?: string | null
+          enquiry_type?: Database["public"]["Enums"]["enquiry_type"]
+          status?: Database["public"]["Enums"]["enquiry_status"]
+          name?: string
+          email?: string
+          phone?: string | null
+          message?: string
+          event_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquiries_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquiries_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquiries_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       genres: {
         Row: {
           created_at: string
@@ -1044,6 +1117,8 @@ export type Database = {
         | "CANCELLED"
         | "COMPLETED"
       category_type: "EVENT_TYPE" | "MUSIC_GENRE"
+      enquiry_status: "PENDING" | "READ" | "RESPONDED" | "ARCHIVED"
+      enquiry_type: "BOOKING" | "PRICING" | "AVAILABILITY" | "GENERAL"
       favorite_type: "ARTIST" | "VENUE"
       media_type: "IMAGE" | "VIDEO" | "AUDIO"
       profile_role: "USER" | "ARTIST" | "VENUE" | "ADMIN"

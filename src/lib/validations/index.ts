@@ -103,6 +103,14 @@ export {
   type EmailPreferencesInput,
 } from './email'
 
+// Enquiry
+export {
+  createEnquirySchema,
+  enquiryTypeValues,
+  type CreateEnquiryInput,
+  type EnquiryType,
+} from './enquiry'
+
 // Planning
 export {
   createTaskSchema,

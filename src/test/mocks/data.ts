@@ -163,3 +163,20 @@ export const mockMediaRecord = {
   artist_id: 'artist-1',
   created_at: '2024-01-01T00:00:00Z',
 }
+
+export const mockEnquiry = {
+  id: 'enq-1',
+  sender_id: 'user-123',
+  entity_type: 'ARTIST' as const,
+  artist_id: 'artist-1',
+  venue_id: null,
+  enquiry_type: 'BOOKING' as const,
+  status: 'PENDING' as const,
+  name: 'Test User',
+  email: 'test@example.com',
+  phone: null,
+  message: 'I would like to book you for an event.',
+  event_date: '2024-07-15',
+  created_at: '2024-01-15T10:00:00Z',
+  updated_at: '2024-01-15T10:00:00Z',
+}

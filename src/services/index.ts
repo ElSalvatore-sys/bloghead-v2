@@ -82,3 +82,10 @@ export {
 } from './media'
 
 export { EmailService, type EmailPreferences } from './email'
+
+export {
+  EnquiryService,
+  type Enquiry,
+  type EnquiryStatus,
+  type EnquiryWithDetails,
+} from './enquiries'

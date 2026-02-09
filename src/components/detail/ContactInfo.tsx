@@ -6,7 +6,7 @@ interface ContactInfoProps {
   soundcloud?: string | null
   spotify?: string | null
   website?: string | null
-  onBookingClick?: () => void
+  onEnquiryClick?: () => void
   onMessageClick?: () => void
 }
 
@@ -22,7 +22,7 @@ export function ContactInfo({
   soundcloud,
   spotify,
   website,
-  onBookingClick,
+  onEnquiryClick,
   onMessageClick,
 }: ContactInfoProps) {
   const values: Record<string, string | null | undefined> = { instagram, soundcloud, spotify, website }
@@ -65,11 +65,11 @@ export function ContactInfo({
       )}
       <Button
         className="w-full"
-        onClick={onBookingClick}
-        data-testid="booking-cta"
+        onClick={onEnquiryClick}
+        data-testid="enquiry-cta"
       >
         <Mail className="mr-2 h-4 w-4" />
-        Send Booking Request
+        Send Enquiry
       </Button>
     </div>
   )
