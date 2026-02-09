@@ -1,153 +1,101 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Heart, Music, MapPin } from 'lucide-react'
-import { PageHeader } from '@/components/ui/page-header'
-import { EmptyState } from '@/components/ui/empty-state'
-import { Skeleton } from '@/components/ui/skeleton'
+import { useSearchParams, Link } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import { ArtistCard } from '@/components/discovery/ArtistCard'
 import { VenueCard } from '@/components/discovery/VenueCard'
-import { useFavoriteArtistsEnriched, useFavoriteVenuesEnriched } from '@/hooks/queries'
-
-function CardSkeletonGrid() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="space-y-3">
-          <Skeleton className="h-48 w-full rounded-lg" />
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-        </div>
-      ))}
-    </div>
-  )
-}
+import {
+  useFavoriteArtistsEnriched,
+  useFavoriteVenuesEnriched,
+} from '@/hooks/queries'
 
 export function FavoritesPage() {
-  const navigate = useNavigate()
-  const {
-    data: artists,
-    isLoading: artistsLoading,
-  } = useFavoriteArtistsEnriched()
-  const {
-    data: venues,
-    isLoading: venuesLoading,
-  } = useFavoriteVenuesEnriched()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = searchParams.get('tab') ?? 'artists'
 
-  useEffect(() => {
-    document.title = 'Favorites | Bloghead'
-    return () => {
-      document.title = 'Bloghead'
-    }
-  }, [])
-
-  const isLoading = artistsLoading || venuesLoading
-  const hasArtists = (artists?.length ?? 0) > 0
-  const hasVenues = (venues?.length ?? 0) > 0
-  const hasAny = hasArtists || hasVenues
+  const artists = useFavoriteArtistsEnriched()
+  const venues = useFavoriteVenuesEnriched()
 
   return (
-    <div className="space-y-6" data-testid="favorites-page">
-      <PageHeader
-        title="Favorites"
-        description="Your saved artists and venues"
-      />
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Heart className="h-8 w-8 text-red-500" />
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">My Favorites</h1>
+          <p className="text-muted-foreground">
+            Your saved artists and venues
+          </p>
+        </div>
+      </div>
 
-      <Tabs defaultValue="all">
+      <Tabs
+        value={tab}
+        onValueChange={(value) => setSearchParams({ tab: value })}
+      >
         <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="artists">Artists</TabsTrigger>
-          <TabsTrigger value="venues">Venues</TabsTrigger>
+          <TabsTrigger value="artists">
+            Artists{artists.data ? ` (${artists.data.length})` : ''}
+          </TabsTrigger>
+          <TabsTrigger value="venues">
+            Venues{venues.data ? ` (${venues.data.length})` : ''}
+          </TabsTrigger>
         </TabsList>
 
-        {/* All tab */}
-        <TabsContent value="all">
-          {isLoading ? (
-            <CardSkeletonGrid />
-          ) : !hasAny ? (
-            <EmptyState
-              icon={Heart}
-              title="No favorites yet"
-              description="Browse artists and venues and tap the heart to save them here."
-              action={{
-                label: 'Browse Artists',
-                onClick: () => navigate('/artists'),
-              }}
-            />
-          ) : (
-            <div className="space-y-8">
-              {hasArtists && (
-                <div>
-                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <Music className="h-5 w-5" />
-                    Artists
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {artists!.map((artist) => (
-                      <ArtistCard key={artist.id} artist={artist} />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {hasVenues && (
-                <div>
-                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
-                    Venues
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {venues!.map((venue) => (
-                      <VenueCard key={venue.id} venue={venue} />
-                    ))}
-                  </div>
-                </div>
-              )}
+        <TabsContent value="artists" className="mt-6">
+          {artists.isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-[280px]" />
+              ))}
             </div>
-          )}
-        </TabsContent>
-
-        {/* Artists tab */}
-        <TabsContent value="artists">
-          {artistsLoading ? (
-            <CardSkeletonGrid />
-          ) : !hasArtists ? (
-            <EmptyState
-              icon={Music}
-              title="No favorite artists yet"
-              description="Browse artists to save some!"
-              action={{
-                label: 'Browse Artists',
-                onClick: () => navigate('/artists'),
-              }}
-            />
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {artists!.map((artist) => (
+          ) : artists.data?.length ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {artists.data.map((artist) => (
                 <ArtistCard key={artist.id} artist={artist} />
               ))}
             </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <Heart className="h-12 w-12 text-muted-foreground/50 mb-4" />
+              <h3 className="text-lg font-semibold">
+                No favorite artists yet
+              </h3>
+              <p className="text-muted-foreground mt-1 mb-4">
+                Discover amazing artists and save them here
+              </p>
+              <Button asChild>
+                <Link to="/artists">Browse Artists</Link>
+              </Button>
+            </div>
           )}
         </TabsContent>
 
-        {/* Venues tab */}
-        <TabsContent value="venues">
-          {venuesLoading ? (
-            <CardSkeletonGrid />
-          ) : !hasVenues ? (
-            <EmptyState
-              icon={MapPin}
-              title="No favorite venues yet"
-              description="Browse venues to save some!"
-              action={{
-                label: 'Browse Venues',
-                onClick: () => navigate('/venues'),
-              }}
-            />
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {venues!.map((venue) => (
+        <TabsContent value="venues" className="mt-6">
+          {venues.isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-[280px]" />
+              ))}
+            </div>
+          ) : venues.data?.length ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {venues.data.map((venue) => (
                 <VenueCard key={venue.id} venue={venue} />
               ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <Heart className="h-12 w-12 text-muted-foreground/50 mb-4" />
+              <h3 className="text-lg font-semibold">
+                No favorite venues yet
+              </h3>
+              <p className="text-muted-foreground mt-1 mb-4">
+                Find your perfect venue and save it here
+              </p>
+              <Button asChild>
+                <Link to="/venues">Browse Venues</Link>
+              </Button>
             </div>
           )}
         </TabsContent>
