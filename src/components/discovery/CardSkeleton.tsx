@@ -10,6 +10,12 @@ export function CardSkeleton() {
           <Skeleton className="h-4 w-16" />
           <Skeleton className="h-4 w-16" />
         </div>
+        <div className="flex items-center gap-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-3.5 w-3.5 rounded-sm" />
+          ))}
+          <Skeleton className="ml-1 h-3.5 w-8" />
+        </div>
         <Skeleton className="h-4 w-1/2" />
       </div>
     </div>

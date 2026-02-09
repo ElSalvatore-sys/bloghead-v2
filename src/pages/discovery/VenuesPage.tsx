@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { PageHeader } from '@/components/ui/page-header'
+import { ChipSelect } from '@/components/shared'
 import {
   SearchBar,
   FilterPanel,
@@ -15,6 +15,14 @@ import {
 import { useDiscoverVenues } from '@/hooks/queries'
 import { useFilterStore } from '@/stores'
 
+const VENUE_TYPE_CHIPS = [
+  { value: 'BAR', label: 'Bars' },
+  { value: 'CLUB', label: 'Clubs' },
+  { value: 'RESTAURANT', label: 'Restaurants' },
+  { value: 'HOTEL', label: 'Hotels' },
+  { value: 'EVENT_SPACE', label: 'Event Spaces' },
+]
+
 export function VenuesPage() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -26,6 +34,9 @@ export function VenuesPage() {
   const searchQuery = useFilterStore((s) => s.searchQuery)
   const categories = useFilterStore((s) => s.categories)
   const locationState = useFilterStore((s) => s.location)
+  const venueTypes = useFilterStore((s) => s.venueTypes)
+  const setVenueTypes = useFilterStore((s) => s.setVenueTypes)
+  const amenityIds = useFilterStore((s) => s.amenityIds)
   const sortBy = useFilterStore((s) => s.sortBy)
   const page = useFilterStore((s) => s.page)
 
@@ -48,7 +59,7 @@ export function VenuesPage() {
       navigate(`?${search}`, { replace: true })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, categories, locationState, sortBy, page])
+  }, [searchQuery, categories, locationState, venueTypes, amenityIds, sortBy, page])
 
   // Reset filters on unmount
   useEffect(() => {
@@ -62,15 +73,31 @@ export function VenuesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Discover Venues"
-        description="Find the perfect venue for your event"
-      />
+      <div>
+        <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
+          Discover Venues
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          Find the perfect venue for your event
+        </p>
+      </div>
+
+      <div className="overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+        <ChipSelect
+          options={VENUE_TYPE_CHIPS}
+          value={venueTypes}
+          onChange={setVenueTypes}
+          multiple
+          className="flex-nowrap"
+        />
+      </div>
 
       <div className="flex gap-6">
         {/* Desktop filter sidebar */}
         <aside className="hidden lg:block w-64 shrink-0">
-          <FilterPanel vendorType="venue" />
+          <div className="sticky top-4">
+            <FilterPanel vendorType="venue" />
+          </div>
         </aside>
 
         {/* Main content */}

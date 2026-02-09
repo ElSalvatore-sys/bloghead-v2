@@ -2,7 +2,16 @@ import { X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useFilterStore } from '@/stores'
-import { useGenres } from '@/hooks/queries'
+import { useGenres, useAmenities } from '@/hooks/queries'
+
+const VENUE_TYPE_LABELS: Record<string, string> = {
+  BAR: 'Bar',
+  CLUB: 'Club',
+  RESTAURANT: 'Restaurant',
+  HOTEL: 'Hotel',
+  EVENT_SPACE: 'Event Space',
+  OTHER: 'Other',
+}
 
 interface ActiveFiltersProps {
   vendorType: 'artist' | 'venue'
@@ -13,18 +22,25 @@ export function ActiveFilters({ vendorType: _vendorType }: ActiveFiltersProps) {
   const categories = useFilterStore((s) => s.categories)
   const priceRange = useFilterStore((s) => s.priceRange)
   const location = useFilterStore((s) => s.location)
+  const venueTypes = useFilterStore((s) => s.venueTypes)
+  const amenityIds = useFilterStore((s) => s.amenityIds)
   const sortBy = useFilterStore((s) => s.sortBy)
   const setSearchQuery = useFilterStore((s) => s.setSearchQuery)
   const setCategories = useFilterStore((s) => s.setCategories)
   const setPriceRange = useFilterStore((s) => s.setPriceRange)
   const setLocation = useFilterStore((s) => s.setLocation)
+  const setVenueTypes = useFilterStore((s) => s.setVenueTypes)
+  const setAmenityIds = useFilterStore((s) => s.setAmenityIds)
   const setSortBy = useFilterStore((s) => s.setSortBy)
   const resetFilters = useFilterStore((s) => s.resetFilters)
 
   const { data: genres } = useGenres()
+  const { data: amenities } = useAmenities()
+
+  const amenityMap = new Map(amenities?.map((a) => [a.id, a.name]) ?? [])
 
   const hasActiveFilters =
-    searchQuery || categories.length > 0 || priceRange || location.cityId || sortBy !== 'relevance'
+    searchQuery || categories.length > 0 || priceRange || location.cityId || venueTypes.length > 0 || amenityIds.length > 0 || sortBy !== 'relevance'
 
   if (!hasActiveFilters) return null
 
@@ -71,6 +87,24 @@ export function ActiveFilters({ vendorType: _vendorType }: ActiveFiltersProps) {
           </button>
         </Badge>
       )}
+
+      {venueTypes.map((type) => (
+        <Badge key={type} variant="secondary" className="gap-1">
+          {VENUE_TYPE_LABELS[type] ?? type}
+          <button onClick={() => setVenueTypes(venueTypes.filter((t) => t !== type))} className="ml-1">
+            <X className="h-3 w-3" />
+          </button>
+        </Badge>
+      ))}
+
+      {amenityIds.map((id) => (
+        <Badge key={id} variant="secondary" className="gap-1">
+          {amenityMap.get(id) ?? id}
+          <button onClick={() => setAmenityIds(amenityIds.filter((a) => a !== id))} className="ml-1">
+            <X className="h-3 w-3" />
+          </button>
+        </Badge>
+      ))}
 
       {sortBy !== 'relevance' && (
         <Badge variant="secondary" className="gap-1">

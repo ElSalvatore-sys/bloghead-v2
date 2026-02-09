@@ -27,6 +27,10 @@ interface FilterState {
     radius: number
   }
 
+  // Venue-specific filters
+  venueTypes: string[]
+  amenityIds: string[]
+
   // Sorting
   sortBy: SortOption
 
@@ -45,6 +49,10 @@ interface FilterActions {
   toggleCategory: (categoryId: string) => void
   setPriceRange: (range: [number, number] | null) => void
   setLocation: (cityId: string | null, radius?: number) => void
+  setVenueTypes: (types: string[]) => void
+  toggleVenueType: (type: string) => void
+  setAmenityIds: (ids: string[]) => void
+  toggleAmenityId: (id: string) => void
   setSortBy: (sort: SortOption) => void
   setPage: (page: number) => void
   setPageSize: (size: number) => void
@@ -69,6 +77,8 @@ const DEFAULT_STATE: FilterState = {
     cityId: null,
     radius: 50,
   },
+  venueTypes: [],
+  amenityIds: [],
   sortBy: 'relevance',
   page: 1,
   pageSize: 20,
@@ -121,6 +131,44 @@ export const useFilterStore = create<FilterState & FilterActions>()(
           'setLocation'
         ),
 
+      // Venue types
+      setVenueTypes: (types) =>
+        set({ venueTypes: types, page: 1 }, false, 'setVenueTypes'),
+
+      toggleVenueType: (type) =>
+        set(
+          (state) => {
+            const exists = state.venueTypes.includes(type)
+            return {
+              venueTypes: exists
+                ? state.venueTypes.filter((t) => t !== type)
+                : [...state.venueTypes, type],
+              page: 1,
+            }
+          },
+          false,
+          'toggleVenueType'
+        ),
+
+      // Amenities
+      setAmenityIds: (ids) =>
+        set({ amenityIds: ids, page: 1 }, false, 'setAmenityIds'),
+
+      toggleAmenityId: (id) =>
+        set(
+          (state) => {
+            const exists = state.amenityIds.includes(id)
+            return {
+              amenityIds: exists
+                ? state.amenityIds.filter((a) => a !== id)
+                : [...state.amenityIds, id],
+              page: 1,
+            }
+          },
+          false,
+          'toggleAmenityId'
+        ),
+
       // Sorting
       setSortBy: (sort) => set({ sortBy: sort, page: 1 }, false, 'setSortBy'),
 
@@ -160,6 +208,12 @@ export const useFilterStore = create<FilterState & FilterActions>()(
           }
         }
 
+        const venueTypes = params.get('venueTypes')
+        if (venueTypes) state.venueTypes = venueTypes.split(',').filter(Boolean)
+
+        const amenityIds = params.get('amenityIds')
+        if (amenityIds) state.amenityIds = amenityIds.split(',').filter(Boolean)
+
         const sort = params.get('sort') as SortOption | null
         if (sort) state.sortBy = sort
 
@@ -187,6 +241,10 @@ export const useFilterStore = create<FilterState & FilterActions>()(
         if (state.location.cityId) params.set('cityId', state.location.cityId)
         if (state.location.radius !== 50)
           params.set('radius', String(state.location.radius))
+        if (state.venueTypes.length > 0)
+          params.set('venueTypes', state.venueTypes.join(','))
+        if (state.amenityIds.length > 0)
+          params.set('amenityIds', state.amenityIds.join(','))
         if (state.sortBy !== 'relevance') params.set('sort', state.sortBy)
         if (state.page > 1) params.set('page', String(state.page))
         if (state.viewMode !== 'grid') params.set('view', state.viewMode)
@@ -203,6 +261,8 @@ export const useFilterStore = create<FilterState & FilterActions>()(
         if (state.categories.length > 0) count++
         if (state.priceRange) count++
         if (state.location.cityId) count++
+        if (state.venueTypes.length > 0) count++
+        if (state.amenityIds.length > 0) count++
         if (state.sortBy !== 'relevance') count++
 
         return count

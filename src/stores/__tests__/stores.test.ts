@@ -155,6 +155,8 @@ describe('Filter Store', () => {
       expect(state.searchQuery).toBe('')
       expect(state.categories).toEqual([])
       expect(state.priceRange).toBe(null)
+      expect(state.venueTypes).toEqual([])
+      expect(state.amenityIds).toEqual([])
       expect(state.page).toBe(1)
       expect(state.pageSize).toBe(20)
       expect(state.viewMode).toBe('grid')
@@ -247,12 +249,94 @@ describe('Filter Store', () => {
     })
   })
 
+  describe('Venue Type Actions', () => {
+    it('toggleVenueType() adds type if not present', () => {
+      const { toggleVenueType } = useFilterStore.getState()
+
+      toggleVenueType('BAR')
+
+      expect(useFilterStore.getState().venueTypes).toEqual(['BAR'])
+    })
+
+    it('toggleVenueType() removes type if already present', () => {
+      useFilterStore.setState({ venueTypes: ['BAR', 'CLUB'] })
+      const { toggleVenueType } = useFilterStore.getState()
+
+      toggleVenueType('BAR')
+
+      const venueTypes = useFilterStore.getState().venueTypes
+      expect(venueTypes).not.toContain('BAR')
+      expect(venueTypes).toContain('CLUB')
+    })
+
+    it('toggleVenueType() resets page to 1', () => {
+      useFilterStore.setState({ page: 5 })
+      const { toggleVenueType } = useFilterStore.getState()
+
+      toggleVenueType('BAR')
+
+      expect(useFilterStore.getState().page).toBe(1)
+    })
+
+    it('setVenueTypes() sets array and resets page', () => {
+      useFilterStore.setState({ page: 3 })
+      const { setVenueTypes } = useFilterStore.getState()
+
+      setVenueTypes(['BAR', 'CLUB'])
+
+      expect(useFilterStore.getState().venueTypes).toEqual(['BAR', 'CLUB'])
+      expect(useFilterStore.getState().page).toBe(1)
+    })
+  })
+
+  describe('Amenity Actions', () => {
+    it('toggleAmenityId() adds id if not present', () => {
+      const { toggleAmenityId } = useFilterStore.getState()
+
+      toggleAmenityId('id1')
+
+      expect(useFilterStore.getState().amenityIds).toEqual(['id1'])
+    })
+
+    it('toggleAmenityId() removes id if already present', () => {
+      useFilterStore.setState({ amenityIds: ['id1', 'id2'] })
+      const { toggleAmenityId } = useFilterStore.getState()
+
+      toggleAmenityId('id1')
+
+      const amenityIds = useFilterStore.getState().amenityIds
+      expect(amenityIds).not.toContain('id1')
+      expect(amenityIds).toContain('id2')
+    })
+
+    it('toggleAmenityId() resets page to 1', () => {
+      useFilterStore.setState({ page: 5 })
+      const { toggleAmenityId } = useFilterStore.getState()
+
+      toggleAmenityId('id1')
+
+      expect(useFilterStore.getState().page).toBe(1)
+    })
+
+    it('setAmenityIds() sets array and resets page', () => {
+      useFilterStore.setState({ page: 3 })
+      const { setAmenityIds } = useFilterStore.getState()
+
+      setAmenityIds(['id1', 'id2'])
+
+      expect(useFilterStore.getState().amenityIds).toEqual(['id1', 'id2'])
+      expect(useFilterStore.getState().page).toBe(1)
+    })
+  })
+
   describe('Reset Filters', () => {
     it('resetFilters() restores all defaults', () => {
       useFilterStore.setState({
         searchQuery: 'test',
         categories: ['cat1'],
         priceRange: [100, 500],
+        venueTypes: ['BAR'],
+        amenityIds: ['id1'],
         page: 5,
         sortBy: 'price_low',
         viewMode: 'list',
@@ -265,6 +349,8 @@ describe('Filter Store', () => {
       expect(state.searchQuery).toBe('')
       expect(state.categories).toEqual([])
       expect(state.priceRange).toBe(null)
+      expect(state.venueTypes).toEqual([])
+      expect(state.amenityIds).toEqual([])
       expect(state.page).toBe(1)
       expect(state.sortBy).toBe('relevance')
       expect(state.viewMode).toBe('grid')
@@ -308,6 +394,15 @@ describe('Filter Store', () => {
       const { getActiveFilterCount } = useFilterStore.getState()
       expect(getActiveFilterCount()).toBe(3)
     })
+
+    it('counts venueTypes and amenityIds when set', () => {
+      useFilterStore.setState({
+        venueTypes: ['BAR'],
+        amenityIds: ['id1'],
+      })
+      const { getActiveFilterCount } = useFilterStore.getState()
+      expect(getActiveFilterCount()).toBe(2)
+    })
   })
 
   describe('toSearchParams()', () => {
@@ -332,6 +427,19 @@ describe('Filter Store', () => {
       expect(params.get('radius')).toBe('25')
       expect(params.get('sort')).toBe('price_low')
       expect(params.get('page')).toBe('2')
+    })
+
+    it('serializes venueTypes and amenityIds', () => {
+      useFilterStore.setState({
+        venueTypes: ['BAR', 'CLUB'],
+        amenityIds: ['id1', 'id2'],
+      })
+
+      const { toSearchParams } = useFilterStore.getState()
+      const params = toSearchParams()
+
+      expect(params.get('venueTypes')).toBe('BAR,CLUB')
+      expect(params.get('amenityIds')).toBe('id1,id2')
     })
 
     it('excludes null/empty values', () => {
@@ -380,6 +488,19 @@ describe('Filter Store', () => {
       expect(state.searchQuery).toBe('test')
       expect(state.categories).toEqual([])
       expect(state.priceRange).toBe(null)
+    })
+
+    it('deserializes venueTypes and amenityIds', () => {
+      const params = new URLSearchParams()
+      params.set('venueTypes', 'BAR,CLUB')
+      params.set('amenityIds', 'id1,id2')
+
+      const { hydrateFromParams } = useFilterStore.getState()
+      hydrateFromParams(params)
+
+      const state = useFilterStore.getState()
+      expect(state.venueTypes).toEqual(['BAR', 'CLUB'])
+      expect(state.amenityIds).toEqual(['id1', 'id2'])
     })
   })
 })

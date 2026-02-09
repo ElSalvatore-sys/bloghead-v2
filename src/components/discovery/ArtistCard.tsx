@@ -17,7 +17,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
   if (viewMode === 'list') {
     return (
       <Link to={`/artists/${artist.id}`} className="block">
-        <Card className="overflow-hidden" data-testid={`artist-card-${artist.id}`}>
+        <Card className="overflow-hidden transition-all duration-200 hover:shadow-md" data-testid={`artist-card-${artist.id}`}>
           <div className="flex">
             <div className="w-32 shrink-0">
               {artist.primary_image_url ? (
@@ -70,7 +70,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
   return (
     <Link to={`/artists/${artist.id}`} className="block">
       <Card
-        className={cn('overflow-hidden group cursor-pointer transition-shadow hover:shadow-md')}
+        className={cn('overflow-hidden group cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1')}
         data-testid={`artist-card-${artist.id}`}
       >
         <div className="relative aspect-[4/3]">

@@ -9,6 +9,7 @@ import {
   VenueService,
   type ArtistDiscoverResult,
   type VenueDiscoverResult,
+  type VenueType,
 } from '@/services'
 import { useFilterStore } from '@/stores'
 
@@ -54,11 +55,13 @@ export function useDiscoverVenues() {
   const searchQuery = useFilterStore((s) => s.searchQuery)
   const categories = useFilterStore((s) => s.categories)
   const location = useFilterStore((s) => s.location)
+  const venueTypes = useFilterStore((s) => s.venueTypes)
+  const amenityIds = useFilterStore((s) => s.amenityIds)
   const sortBy = useFilterStore((s) => s.sortBy)
   const page = useFilterStore((s) => s.page)
   const pageSize = useFilterStore((s) => s.pageSize)
 
-  const filters = { searchQuery, categories, location, sortBy, page }
+  const filters = { searchQuery, categories, location, venueTypes, amenityIds, sortBy, page }
 
   return useQuery<{ data: VenueDiscoverResult[]; count: number | null }, Error>({
     queryKey: discoveryKeys.venues(filters),
@@ -66,6 +69,8 @@ export function useDiscoverVenues() {
       VenueService.discover({
         searchQuery: searchQuery || undefined,
         cityId: location.cityId ?? undefined,
+        venueTypes: venueTypes.length > 0 ? venueTypes as VenueType[] : undefined,
+        amenityIds: amenityIds.length > 0 ? amenityIds : undefined,
         sortBy,
         limit: pageSize,
         offset: (page - 1) * pageSize,

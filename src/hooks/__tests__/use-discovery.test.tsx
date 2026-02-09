@@ -24,6 +24,8 @@ vi.mock('@/stores', () => ({
       categories: [] as string[],
       priceRange: null,
       location: { cityId: null, radius: 50 },
+      venueTypes: [] as string[],
+      amenityIds: [] as string[],
       sortBy: 'relevance',
       page: 1,
       pageSize: 20,
@@ -168,6 +170,8 @@ describe('useDiscoverVenues', () => {
     expect(mocks.discoverVenues).toHaveBeenCalledWith({
       searchQuery: undefined,
       cityId: undefined,
+      venueTypes: undefined,
+      amenityIds: undefined,
       sortBy: 'relevance',
       limit: 20,
       offset: 0,

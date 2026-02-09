@@ -26,7 +26,7 @@ export function VenueCard({ venue }: VenueCardProps) {
   if (viewMode === 'list') {
     return (
       <Link to={`/venues/${venue.id}`} className="block">
-        <Card className="overflow-hidden" data-testid={`venue-card-${venue.id}`}>
+        <Card className="overflow-hidden transition-all duration-200 hover:shadow-md" data-testid={`venue-card-${venue.id}`}>
           <div className="flex">
             <div className="w-32 shrink-0">
               {venue.primary_image_url ? (
@@ -76,7 +76,7 @@ export function VenueCard({ venue }: VenueCardProps) {
   return (
     <Link to={`/venues/${venue.id}`} className="block">
       <Card
-        className={cn('overflow-hidden group cursor-pointer transition-shadow hover:shadow-md')}
+        className={cn('overflow-hidden group cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1')}
         data-testid={`venue-card-${venue.id}`}
       >
         <div className="relative aspect-[4/3]">
