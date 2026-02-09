@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { AlertCircle, MapPin, Users } from 'lucide-react'
+import { AlertCircle, MapPin, Users, Building2 } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FavoriteButton } from '@/components/discovery/FavoriteButton'
+import { RatingStars } from '@/components/discovery/RatingStars'
 import { BookingRequestModal } from '@/components/booking'
 import {
   BackButton,
@@ -91,7 +92,7 @@ export function VenueDetailPage() {
   const location = [venue.street, cityName].filter(Boolean).join(', ')
 
   return (
-    <div className="space-y-6" data-testid="venue-detail">
+    <div className="space-y-6 pb-24 lg:pb-0" data-testid="venue-detail">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <BackButton />
@@ -112,7 +113,7 @@ export function VenueDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Name + type */}
+          {/* Name + type + rating */}
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold">{venue.venue_name}</h1>
@@ -126,6 +127,7 @@ export function VenueDetailPage() {
                 {location}
               </p>
             )}
+            <RatingStars rating={4.3} reviewCount={0} size="md" className="mt-2" />
           </div>
 
           {/* Description */}
@@ -148,34 +150,55 @@ export function VenueDetailPage() {
             </div>
           )}
 
+          {/* Stats row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
+              <Building2 className="h-5 w-5 text-primary" />
+              <div>
+                <p className="text-sm text-muted-foreground">Venue Type</p>
+                <p className="font-semibold">{VENUE_TYPE_LABELS[venue.type] ?? venue.type}</p>
+              </div>
+            </div>
+            {(venue.capacity_min || venue.capacity_max) && (
+              <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
+                <Users className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Capacity</p>
+                  <p className="font-semibold">
+                    {venue.capacity_min && venue.capacity_max
+                      ? `${venue.capacity_min} - ${venue.capacity_max}`
+                      : venue.capacity_max
+                        ? `Up to ${venue.capacity_max}`
+                        : `From ${venue.capacity_min}`}
+                  </p>
+                </div>
+              </div>
+            )}
+            {location && (
+              <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
+                <MapPin className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Location</p>
+                  <p className="font-semibold">{cityName ?? location}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Amenities */}
           {amenities.length > 0 && (
             <div>
               <h2 className="mb-3 text-lg font-semibold">Amenities</h2>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {amenities.map((a) => (
-                  <Badge key={a.id} variant="secondary" className="gap-1.5 px-3 py-1">
-                    {a.icon && <span>{a.icon}</span>}
-                    {a.name}
-                  </Badge>
+                  <div
+                    key={a.id}
+                    className="flex items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2"
+                  >
+                    {a.icon && <span className="text-base">{a.icon}</span>}
+                    <span className="text-sm font-medium">{a.name}</span>
+                  </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {/* Capacity */}
-          {(venue.capacity_min || venue.capacity_max) && (
-            <div className="flex items-center gap-2 rounded-lg border px-4 py-3">
-              <Users className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Capacity</p>
-                <p className="font-semibold">
-                  {venue.capacity_min && venue.capacity_max
-                    ? `${venue.capacity_min} - ${venue.capacity_max} guests`
-                    : venue.capacity_max
-                      ? `Up to ${venue.capacity_max} guests`
-                      : `From ${venue.capacity_min} guests`}
-                </p>
               </div>
             </div>
           )}
@@ -208,6 +231,18 @@ export function VenueDetailPage() {
       </div>
 
       <BookingRequestModal />
+
+      {/* Sticky mobile booking bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background p-4 lg:hidden">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="flex-1" onClick={handleMessageClick}>
+            Message
+          </Button>
+          <Button className="flex-1" onClick={handleBookingClick}>
+            Book Now
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

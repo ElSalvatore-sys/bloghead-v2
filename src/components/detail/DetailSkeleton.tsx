@@ -12,8 +12,18 @@ export function DetailSkeleton() {
         </div>
       </div>
 
-      {/* Hero image */}
-      <Skeleton className="aspect-video w-full rounded-lg" />
+      {/* Bento gallery skeleton — desktop */}
+      <div className="hidden md:flex gap-1 rounded-xl overflow-hidden" style={{ height: '400px' }}>
+        <Skeleton className="flex-[2]" />
+        <div className="flex flex-1 flex-col gap-1">
+          <Skeleton className="flex-1" />
+          <Skeleton className="flex-1" />
+          <Skeleton className="flex-1" />
+        </div>
+      </div>
+
+      {/* Gallery skeleton — mobile */}
+      <Skeleton className="aspect-video w-full rounded-xl md:hidden" />
 
       {/* Two-column content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -25,6 +35,11 @@ export function DetailSkeleton() {
             <Skeleton className="h-6 w-16" />
           </div>
           <Skeleton className="h-20 w-full" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Skeleton className="h-16 rounded-lg" />
+            <Skeleton className="h-16 rounded-lg" />
+            <Skeleton className="h-16 rounded-lg" />
+          </div>
           <Skeleton className="h-40 w-full" />
         </div>
         <div className="space-y-4">

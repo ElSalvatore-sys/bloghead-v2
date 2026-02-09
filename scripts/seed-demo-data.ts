@@ -580,6 +580,31 @@ async function seedArtist(
     console.log(`   Primary media exists`)
   }
 
+  // Add gallery images (4 additional non-primary images)
+  const { count: artistMediaCount } = await supabase
+    .from('artist_media')
+    .select('id', { count: 'exact', head: true })
+    .eq('artist_id', artistId)
+
+  if ((artistMediaCount ?? 0) < 5) {
+    console.log(`   Adding gallery images...`)
+    for (let i = 1; i <= 4; i++) {
+      const gallerySeed = artist.imageId + i * 100
+      await supabase.from('artist_media').insert({
+        artist_id: artistId,
+        type: 'IMAGE',
+        url: `https://picsum.photos/seed/${gallerySeed}/800/600`,
+        thumbnail_url: `https://picsum.photos/seed/${gallerySeed}/400/300`,
+        title: `${artist.stageName} gallery photo ${i}`,
+        is_primary: false,
+        sort_order: i,
+      })
+    }
+    console.log(`   Added 4 gallery images`)
+  } else {
+    console.log(`   Gallery images exist (${artistMediaCount} total)`)
+  }
+
   console.log(`   Done: ${artist.stageName}`)
   return true
 }
@@ -689,6 +714,31 @@ async function seedVenue(
     }
   } else {
     console.log(`   Primary media exists`)
+  }
+
+  // Add gallery images (4 additional non-primary images)
+  const { count: venueMediaCount } = await supabase
+    .from('venue_media')
+    .select('id', { count: 'exact', head: true })
+    .eq('venue_id', venueId)
+
+  if ((venueMediaCount ?? 0) < 5) {
+    console.log(`   Adding gallery images...`)
+    for (let i = 1; i <= 4; i++) {
+      const gallerySeed = venue.imageId + i * 100
+      await supabase.from('venue_media').insert({
+        venue_id: venueId,
+        type: 'IMAGE',
+        url: `https://picsum.photos/seed/${gallerySeed}/800/600`,
+        thumbnail_url: `https://picsum.photos/seed/${gallerySeed}/400/300`,
+        title: `${venue.venueName} gallery photo ${i}`,
+        is_primary: false,
+        sort_order: i,
+      })
+    }
+    console.log(`   Added 4 gallery images`)
+  } else {
+    console.log(`   Gallery images exist (${venueMediaCount} total)`)
   }
 
   console.log(`   Done: ${venue.venueName}`)

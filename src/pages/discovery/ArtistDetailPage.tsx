@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FavoriteButton } from '@/components/discovery/FavoriteButton'
+import { RatingStars } from '@/components/discovery/RatingStars'
 import { BookingRequestModal } from '@/components/booking'
 import {
   BackButton,
@@ -80,7 +81,7 @@ export function ArtistDetailPage() {
   const shouldTruncateBio = bio.length > BIO_TRUNCATE
 
   return (
-    <div className="space-y-6" data-testid="artist-detail">
+    <div className="space-y-6 pb-24 lg:pb-0" data-testid="artist-detail">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <BackButton />
@@ -101,7 +102,7 @@ export function ArtistDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Name + genres */}
+          {/* Name + genres + rating */}
           <div>
             <h1 className="text-3xl font-bold">{artist.stage_name}</h1>
             {genres.length > 0 && (
@@ -113,6 +114,7 @@ export function ArtistDetailPage() {
                 ))}
               </div>
             )}
+            <RatingStars rating={4.5} reviewCount={0} size="md" className="mt-2" />
           </div>
 
           {/* Bio */}
@@ -136,10 +138,10 @@ export function ArtistDetailPage() {
           )}
 
           {/* Stats */}
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {artist.hourly_rate !== null && (
-              <div className="flex items-center gap-2 rounded-lg border px-4 py-2">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
+                <DollarSign className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Hourly Rate</p>
                   <p className="font-semibold">${artist.hourly_rate}/hr</p>
@@ -147,8 +149,8 @@ export function ArtistDetailPage() {
               </div>
             )}
             {artist.years_experience !== null && (
-              <div className="flex items-center gap-2 rounded-lg border px-4 py-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
+                <Clock className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Experience</p>
                   <p className="font-semibold">{artist.years_experience} years</p>
@@ -156,8 +158,8 @@ export function ArtistDetailPage() {
               </div>
             )}
             {artist.has_equipment && (
-              <div className="flex items-center gap-2 rounded-lg border px-4 py-2">
-                <Wrench className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
+                <Wrench className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Equipment</p>
                   <p className="font-semibold">Has own equipment</p>
@@ -202,6 +204,19 @@ export function ArtistDetailPage() {
       </div>
 
       <BookingRequestModal />
+
+      {/* Sticky mobile booking bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background p-4 lg:hidden">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">From</p>
+            <p className="text-lg font-bold">
+              {artist.hourly_rate !== null ? `$${artist.hourly_rate}/hr` : 'Contact for pricing'}
+            </p>
+          </div>
+          <Button onClick={handleBookingClick}>Book Now</Button>
+        </div>
+      </div>
     </div>
   )
 }
