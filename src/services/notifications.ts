@@ -35,8 +35,8 @@ interface CreateNotificationInput {
 }
 
 export class NotificationService {
-  static async create(input: CreateNotificationInput): Promise<Notification> {
-    const { data, error } = await supabase
+  static async create(input: CreateNotificationInput): Promise<void> {
+    const { error } = await supabase
       .from('notifications')
       .insert({
         user_id: input.user_id,
@@ -46,11 +46,8 @@ export class NotificationService {
         data: input.data ?? {},
         link: input.link ?? null,
       })
-      .select()
-      .single()
 
     if (error) handleSupabaseError(error)
-    return data as Notification
   }
 
   static async getAll(limit = 50): Promise<Notification[]> {

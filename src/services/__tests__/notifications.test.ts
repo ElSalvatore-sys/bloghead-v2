@@ -59,11 +59,11 @@ beforeEach(() => {
 
 describe('NotificationService', () => {
   describe('create', () => {
-    it('inserts and returns notification', async () => {
-      const builder = mocks.createBuilder({ data: mockNotification, error: null })
+    it('inserts notification', async () => {
+      const builder = mocks.createBuilder({ data: null, error: null })
       mocks.mockFrom.mockReturnValue(builder)
 
-      const result = await NotificationService.create({
+      await NotificationService.create({
         user_id: 'user-123',
         type: 'message_received',
         title: 'New message',
@@ -72,7 +72,7 @@ describe('NotificationService', () => {
       })
 
       expect(mocks.mockFrom).toHaveBeenCalledWith('notifications')
-      expect(result).toEqual(mockNotification)
+      expect(builder.insert).toHaveBeenCalled()
     })
   })
 
