@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@/lib/query-client'
 import { isAbortError } from '@/lib/errors'
+import { reportWebVitals } from '@/lib/performance'
 import { router } from './router'
 import '@fontsource-variable/inter'
 import '@fontsource-variable/playfair-display'
@@ -25,3 +26,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </React.StrictMode>
 )
+
+// Report Web Vitals in development mode
+if (import.meta.env.DEV) {
+  reportWebVitals()
+}

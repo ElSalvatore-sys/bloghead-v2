@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Music, DollarSign, Clock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { OptimizedImage } from '@/components/ui/OptimizedImage'
 import { FavoriteButton } from './FavoriteButton'
 import type { ArtistDiscoverResult } from '@/services'
 import { useFilterStore } from '@/stores'
@@ -21,10 +22,15 @@ export function ArtistCard({ artist }: ArtistCardProps) {
           <div className="flex">
             <div className="w-32 shrink-0">
               {artist.primary_image_url ? (
-                <img
+                <OptimizedImage
                   src={artist.primary_image_url}
                   alt={artist.stage_name}
                   className="h-full w-full object-cover"
+                  fallback={
+                    <div className="flex h-full w-full items-center justify-center bg-muted">
+                      <Music className="h-8 w-8 text-muted-foreground/50" />
+                    </div>
+                  }
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-muted">
@@ -75,10 +81,15 @@ export function ArtistCard({ artist }: ArtistCardProps) {
       >
         <div className="relative aspect-[4/3]">
           {artist.primary_image_url ? (
-            <img
+            <OptimizedImage
               src={artist.primary_image_url}
               alt={artist.stage_name}
               className="h-full w-full object-cover"
+              fallback={
+                <div className="flex h-full w-full items-center justify-center bg-muted">
+                  <Music className="h-12 w-12 text-muted-foreground/50" />
+                </div>
+              }
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-muted">
