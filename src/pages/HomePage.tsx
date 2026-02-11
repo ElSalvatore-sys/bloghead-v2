@@ -1,4 +1,7 @@
 import { Suspense, lazy } from 'react'
+import { AuthModalProvider } from '@/context/AuthModalContext'
+import { AuthModal } from '@/components/auth/AuthModal'
+import LandingNav from '@/components/sections/LandingNav'
 
 // Lazy load all 8 sections
 const HeroSection = lazy(() => import('@/components/sections/HeroSection'))
@@ -23,32 +26,36 @@ const LoadingSpinner = () => (
  */
 export const HomePage = () => {
   return (
-    <div className="relative bg-[#171717]">
-      <Suspense fallback={<LoadingSpinner />}>
-        {/* Section 1: Hero - Full screen */}
-        <HeroSection />
+    <AuthModalProvider>
+      <div className="relative bg-[#171717]">
+        <LandingNav />
+        <Suspense fallback={<LoadingSpinner />}>
+          {/* Section 1: Hero - Full screen */}
+          <HeroSection />
 
-        {/* Section 2: About - Eine Plattform, Zwei Welten */}
-        <AboutSection />
+          {/* Section 2: About - Eine Plattform, Zwei Welten */}
+          <AboutSection />
 
-        {/* Section 3: Features - Für wen ist Bloghead? */}
-        <FeaturesSection />
+          {/* Section 3: Features - Für wen ist Bloghead? */}
+          <FeaturesSection />
 
-        {/* Section 4: Artists Carousel */}
-        <ArtistsCarouselSection />
+          {/* Section 4: Artists Carousel */}
+          <ArtistsCarouselSection />
 
-        {/* Section 5: Member CTA */}
-        <MemberCTASection />
+          {/* Section 5: Member CTA */}
+          <MemberCTASection />
 
-        {/* Section 6: Member Benefits */}
-        <VorteileMemberSection />
+          {/* Section 6: Member Benefits */}
+          <VorteileMemberSection />
 
-        {/* Section 7: Events Grid */}
-        <EventsSection />
+          {/* Section 7: Events Grid */}
+          <EventsSection />
 
-        {/* Section 8: VR Experiences */}
-        <VRExperiencesSection />
-      </Suspense>
-    </div>
+          {/* Section 8: VR Experiences */}
+          <VRExperiencesSection />
+        </Suspense>
+        <AuthModal />
+      </div>
+    </AuthModalProvider>
   )
 }

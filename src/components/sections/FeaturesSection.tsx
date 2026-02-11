@@ -4,24 +4,28 @@ import { Users, Music, Briefcase, CalendarDays } from 'lucide-react'
 const userTypes = [
   {
     icon: Users,
-    title: 'Community',
-    description: 'Entdecke Artists, Events und Aktionen an einem Ort. Bleib in Kontakt mit deinen Lieblingskuenstlern und verpasse nie wieder ein Event.'
+    title: 'COMMUNITY',
+    description:
+      'Du willst wissen, was bei deinen Lieblingsacts abgeht und neue Artists entdecken, ohne zehn Apps zu checken? Mit deinem kostenlosen Profil folgst und supportest du Artists, findest Events & Tickets an einem Ort, staerkst lokale Acts, triffst Gleichgesinnte und bekommst exklusive Einblicke & Specials.',
   },
   {
     icon: Music,
-    title: 'Artist',
-    description: 'Verwalte dein Profil, teile Events und baue deine Community auf. Alle Tools fuer deinen Erfolg in einer Plattform.'
+    title: 'ARTIST',
+    description:
+      'Dein Artist-Profil buendelt Buchungen, Gigs, Kontakte & Rechnungen und hilft dir gleichzeitig, Reichweite, Fanbase und Einnahmen ueber Gigs, Links & Merch auszubauen.',
   },
   {
     icon: Briefcase,
-    title: 'Dienstleister',
-    description: 'Biete deine Services an, vernetze dich mit Artists und Veranstaltern. Erweitere dein Netzwerk und gewinne neue Kunden.'
+    title: 'DIENSTLEISTER',
+    description:
+      'Mit deinem Dienstleister-Profil nutzt du alle Office-Funktionen fuer Angebote, Vertraege, Rechnungen & Kontakte und wirst gleichzeitig fuer Events gefunden, gebucht und baust deinen Kundenstamm systematisch aus.',
   },
   {
     icon: CalendarDays,
-    title: 'Veranstalter',
-    description: 'Organisiere Events, manage Buchungen und arbeite mit Artists zusammen. Alles was du brauchst fuer erfolgreiche Events.'
-  }
+    title: 'VERANSTALTER',
+    description:
+      'Mit deinem Veranstalter-Profil planst du deine Events einfach auf einer Plattform, buendelst Anfragen, Buchungen, Vertraege & Rechnungen und hast passende Artists und Dienstleister direkt an deiner Seite.',
+  },
 ]
 
 export default function FeaturesSection() {
@@ -36,7 +40,7 @@ export default function FeaturesSection() {
           viewport={{ once: true }}
         >
           <h2 className="font-display text-5xl md:text-6xl text-white mb-4">
-            Für wen ist Bloghead?
+            Fuer wen ist Bloghead?
           </h2>
         </motion.div>
 
