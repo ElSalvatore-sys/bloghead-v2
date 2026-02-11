@@ -1,52 +1,53 @@
 import { Suspense, lazy } from 'react'
 
-// Lazy load landing sections for code-splitting
-const HeroSection = lazy(() => import('@/components/landing/HeroSection'))
-const FeaturesSection = lazy(() => import('@/components/landing/FeaturesSection'))
-const StatsSection = lazy(() => import('@/components/landing/StatsSection'))
-const HowItWorksSection = lazy(() => import('@/components/landing/HowItWorksSection'))
-const CTASection = lazy(() => import('@/components/landing/CTASection'))
+// Lazy load all 8 sections
+const HeroSection = lazy(() => import('@/components/sections/HeroSection'))
+const AboutSection = lazy(() => import('@/components/sections/AboutSection'))
+const FeaturesSection = lazy(() => import('@/components/sections/FeaturesSection'))
+const ArtistsCarouselSection = lazy(() => import('@/components/sections/ArtistsCarouselSection'))
+const MemberCTASection = lazy(() => import('@/components/sections/MemberCTASection'))
+const VorteileMemberSection = lazy(() => import('@/components/sections/VorteileMemberSection'))
+const EventsSection = lazy(() => import('@/components/sections/EventsSection'))
+const VRExperiencesSection = lazy(() => import('@/components/sections/VRExperiencesSection'))
 
-// Loading spinner component
 const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
+  <div className="flex items-center justify-center min-h-screen bg-[#171717]">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#610AD1]"></div>
   </div>
 )
 
 /**
  * Home/Landing Page
- * Clean, static, professional design matching original Bloghead
- * 5 sections: Hero, Features, Stats, How It Works, CTA
+ * Pixel-perfect recreation of blogyydev.xyz design
+ * 8 sections: Hero, About, Features, Artists Carousel, Member CTA, Member Benefits, Events, VR
  */
 export const HomePage = () => {
   return (
     <div className="relative bg-[#171717]">
       <Suspense fallback={<LoadingSpinner />}>
-        {/* Section 1: Hero - Full viewport with background image */}
-        <section className="relative min-h-screen flex items-center justify-center">
-          <HeroSection />
-        </section>
+        {/* Section 1: Hero - Full screen */}
+        <HeroSection />
 
-        {/* Section 2: Features - Grid of 6 cards */}
-        <section className="py-24 px-4">
-          <FeaturesSection />
-        </section>
+        {/* Section 2: About - Eine Plattform, Zwei Welten */}
+        <AboutSection />
 
-        {/* Section 3: Stats - Counter with stats */}
-        <section className="py-24 px-4 bg-[#232323]">
-          <StatsSection />
-        </section>
+        {/* Section 3: Features - Für wen ist Bloghead? */}
+        <FeaturesSection />
 
-        {/* Section 4: How It Works - 3-step process */}
-        <section className="py-24 px-4">
-          <HowItWorksSection />
-        </section>
+        {/* Section 4: Artists Carousel */}
+        <ArtistsCarouselSection />
 
-        {/* Section 5: CTA - Final call to action */}
-        <section className="py-24 px-4 bg-gradient-to-b from-[#171717] to-[#232323]">
-          <CTASection />
-        </section>
+        {/* Section 5: Member CTA */}
+        <MemberCTASection />
+
+        {/* Section 6: Member Benefits */}
+        <VorteileMemberSection />
+
+        {/* Section 7: Events Grid */}
+        <EventsSection />
+
+        {/* Section 8: VR Experiences */}
+        <VRExperiencesSection />
       </Suspense>
     </div>
   )

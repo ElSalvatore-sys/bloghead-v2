@@ -1,6 +1,49 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Hyperwave One - Display/Script Font */
+@font-face {
+  font-family: 'Hyperwave One';
+  src: url('/fonts/HyperwaveOne.woff2') format('woff2'),
+       url('/fonts/HyperwaveOne.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Roboto - Body Font */
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/roboto-300.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/roboto-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/roboto-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/roboto-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* --- Light mode tokens (default) --- */
 
@@ -67,7 +110,7 @@
 
   /* Fonts */
   --font-sans: 'Roboto', system-ui, ui-sans-serif, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-  --font-display: 'Playfair Display Variable', ui-serif, Georgia, Cambria, serif;
+  --font-display: 'Hyperwave One', cursive;
 
   /* Shadows — lighter than TW4 defaults */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -144,4 +187,20 @@
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
+}
+
+/* Bloghead-specific gradient utilities */
+.gradient-bloghead {
+  background: linear-gradient(135deg, #610AD1 0%, #F92B02 50%, #FB7A43 100%);
+}
+
+.gradient-bloghead-horizontal {
+  background: linear-gradient(90deg, #610AD1 0%, #F92B02 100%);
+}
+
+.text-gradient-bloghead {
+  background: linear-gradient(135deg, #610AD1 0%, #F92B02 50%, #FB7A43 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
